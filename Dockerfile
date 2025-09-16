@@ -16,3 +16,5 @@ RUN apt-get update && apt-get install -y git curl && \
 COPY pyproject.toml poetry.lock ./
 
 RUN poetry install --no-root
+
+COPY . .

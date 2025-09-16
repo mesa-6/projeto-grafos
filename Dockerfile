@@ -1,40 +1,50 @@
 FROM python:3.12-slim
 
+# Variáveis de ambiente
 ENV POETRY_VERSION=2.1.4 \
     POETRY_VIRTUALENVS_CREATE=false \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH="/root/.local/bin:$PATH" \
-    REPO_DIR=/projeto-grafos
+    PATH="/home/dev/.local/bin:$PATH" \
+    REPO_URL="https://github.com/ArthurCapistrano/projeto-grafos.git" \
+    REPO_BRANCH="main" \
+    REPO_DIR="/projeto-grafos" \
+    START_CMD="python -m src.main"
+
+# criar usuário não-root
+ARG UNAME=dev
+ARG UID=1000
+RUN groupadd -g ${UID} ${UNAME} || true && \
+    useradd --create-home --uid ${UID} --gid ${UID} ${UNAME}
 
 WORKDIR /opt/app
 
-# instalar dependências do sistema (git para clonar em runtime)
+# instalar dependências do sistema e poetry via pip (mais previsível para todos os usuários)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends git curl ca-certificates build-essential && \
-    curl -sSL https://install.python-poetry.org | python3 - && \
-    apt-get purge -y curl && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends git ca-certificates build-essential curl && \
+    python -m pip install --upgrade pip && \
+    pip install "poetry==${POETRY_VERSION}" && \
+    apt-get purge -y curl && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# copiar só pyproject/poetry.lock para instalar deps (cache layer)
+# copiar apenas o pyproject/poetry.lock para aproveitar cache de camada
 COPY pyproject.toml poetry.lock /opt/app/
 
-# instalar dependências python (no ambiente do container, sem virtualenvs)
-RUN poetry install --no-root
+# instalar dependências python (poetry vai instalar no ambiente do container, não cria venv)
+RUN poetry install --no-root --no-interaction
 
-# copiar util scripts
+# criar diretório onde o repo será clonado e ajustar permissões para o usuário dev
+RUN mkdir -p ${REPO_DIR} && chown -R ${UNAME}:${UNAME} ${REPO_DIR}
+
+# copiar entrypoint e garantir execução
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Porta padrão (ajuste conforme app: 8000 no docker-compose que você tinha)
+# expor porta (ajuste se necessário)
 EXPOSE 8000
 
-# Quando o container iniciar, o entrypoint fará clone/pull e depois executará START_CMD
-# START_CMD deve ser algo como "python -m src.main" ou "uvicorn src.app:app --host 0.0.0.0 --port 8000"
-ENV REPO_URL=https://github.com/ArthurCapistrano/projeto-grafos.git
-ENV REPO_BRANCH=main
-ENV REPO_DIR=/projeto-grafos
-ENV START_CMD="python -m src.main"
+# usar o usuário não-root para rodar o app (evita arquivos root no host)
+USER ${UNAME}
 
-ENTRYPOINT ["entrypoint.sh"]
+# entrypoint fará git clone/pull e então executará o comando definido em START_CMD
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["sh", "-c", "${START_CMD}"]

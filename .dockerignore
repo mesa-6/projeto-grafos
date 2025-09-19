@@ -1,35 +1,12 @@
-# Arquivos do sistema
-__pycache__/
+__pycache__
 *.pyc
 *.pyo
 *.pyd
-*.swp
-*.DS_Store
-*.egg-info/
-
-# Virtual environments locais (não precisa copiar)
-.venv/
-venv/
-
-# Arquivos de configuração local
 .env
-.env.local
-
-# Cache do Poetry
-.poetry/
-
-# Logs e saída local
-*.log
-out/
-
-# Git
 .git
-.gitignore
-
-# IDEs e editores
-.vscode/
-.idea/
-
-# Arquivos temporários
-*.tmp
-*.bak
+.vscode
+.idea
+*.sqlite3
+build/
+dist/
+*.egg-info

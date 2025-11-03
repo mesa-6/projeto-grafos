@@ -3,8 +3,8 @@ import pandas as pd
 import heapq
 import json
 
-data_path = Path(_file_).resolve().parent.parent.parent / 'data'
-out_path = Path(_file_).resolve().parent.parent.parent / 'out'
+data_path = Path(__file__).resolve().parent.parent.parent / 'data'
+out_path = Path(__file__).resolve().parent.parent.parent / 'out'
 
 adjacencias_file = data_path / 'adjacencias_bairros.csv'
 enderecos_file = data_path / 'enderecos.csv'

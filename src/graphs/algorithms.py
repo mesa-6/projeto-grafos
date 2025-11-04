@@ -1,4 +1,8 @@
+from tempfile import NamedTemporaryFile
+from pyvis.network import Network
+from math import cos, sin, pi
 from pathlib import Path
+
 import pandas as pd
 import heapq
 import json
@@ -114,20 +118,7 @@ for _, row in df_enderecos.iterrows():
 resultados_df = pd.DataFrame(resultados_caminhos)
 resultados_df.to_csv(out_path / 'distancias_enderecos.csv', index=False)
 
-# Transforme o percurso em árvore e mostre
-# A partir do caminho “Nova Descoberta → Boa Viagem (Setúbal)”, construam
-# a árvore de caminho (um subgrafo com as arestas do percurso) e exportem
-# uma visualização:
-# o out/arvore_percurso.html (interativa, ex.: pyvis/plotly) ou
-# Requisito: destacar o caminho (cor, espessura) e mostrar rótulos dos bairros.
-# Não usar bibliotecas de visualização de grafos (ex.: networkx, igraph, graph-tool).
-
-from pyvis.network import Network
-from math import cos, sin, pi
-from pyvis.network import Network
-
 def _radial_positions(nodes: list, radius: int = 300, center=(0,0)):
-    """Retorna dicionário {node: (x, y)} com posições radiais uniformes."""
     n = len(nodes)
     cx, cy = center
     positions = {}
@@ -141,17 +132,16 @@ def _radial_positions(nodes: list, radius: int = 300, center=(0,0)):
     return positions
 
 def criar_arvore_percurso(caminho: list, logradouros: list, out_file: Path):
-    # garantir string para pyvis
     out_file = str(out_file) if isinstance(out_file, Path) else out_file
+
     if not out_file.lower().endswith('.html'):
         out_file += '.html'
 
-    # coletar nós únicos (ordem do caminho garante sequência)
-    nodes = list(dict.fromkeys(caminho))  # preserva ordem e remove duplicatas
+    nodes = list(dict.fromkeys(caminho))  
     pos = _radial_positions(nodes, radius=380, center=(0,0))
 
     net = Network(height='800px', width='100%', bgcolor='#222222', font_color='white')
-    # opções vis.js para aparência (nó, aresta, física)
+    
     net.set_options("""
     var options = {
       "physics": {
@@ -169,15 +159,14 @@ def criar_arvore_percurso(caminho: list, logradouros: list, out_file: Path):
     }
     """)
 
-    # adicionar nós com posições fixas (physics desligado)
     for node in nodes:
         x, y = pos.get(node, (0,0))
-        # destacar origem e destino
+        
         if node == caminho[0]:
-            color = '#00ff66'  # verde início
+            color = '#00ff66' 
             size = 32
         elif node == caminho[-1]:
-            color = '#ff6666'  # vermelho fim
+            color = '#ff6666'  
             size = 32
         else:
             color = 'orange'
@@ -185,7 +174,6 @@ def criar_arvore_percurso(caminho: list, logradouros: list, out_file: Path):
 
         net.add_node(node, label=node, title=node, x=x, y=y, physics=False, color=color, size=size)
 
-    # adicionar todas as arestas do percurso (com tooltip do logradouro)
     for i in range(len(caminho) - 1):
         origem = caminho[i]
         destino = caminho[i + 1]
@@ -196,18 +184,222 @@ def criar_arvore_percurso(caminho: list, logradouros: list, out_file: Path):
                      width=4,
                      smooth=True)
 
-    # adicionar um nó "invisível" com legenda (simples) — ou você pode inserir HTML manualmente
-    # salvar
     net.write_html(out_file)
 
-# Buscar caminho do arquivo salvo
 with open(out_path / 'percurso_nova_descoberta_setubal.json', 'r', encoding='utf-8') as f:
     percurso_data = json.load(f)
 
 caminho = percurso_data['caminho']
 logradouros = percurso_data['ruas']
 
-# transformar path em string para mandar para a função
+# Gerar arquivo do percurso específico pedido pela professora
 path_str = f'{out_path}/arvore_percurso.html'
 
 criar_arvore_percurso(caminho, logradouros, path_str)
+
+# Geração dos subgrafos por microrregião
+df_bairros_unique = pd.read_csv(data_path / 'bairros_unique.csv')
+
+microrregioes = df_bairros_unique['microrregiao'].unique()
+
+for microrregiao in microrregioes:
+    bairros_microrregiao = df_bairros_unique[df_bairros_unique['microrregiao'] == microrregiao]['bairro'].tolist()
+    
+    # Filtrar adjacências para incluir apenas aquelas entre bairros da microrregião
+    df_adjacencias_microrregiao = df_adjacencias[
+        (df_adjacencias['bairro_origem'].isin(bairros_microrregiao)) &
+        (df_adjacencias['bairro_destino'].isin(bairros_microrregiao))
+    ]
+    
+    # Criar grafo e visualização
+    graph = montar_grafo(df_adjacencias_microrregiao)
+    
+    net = Network(height='800px', width='100%', bgcolor='#222222', font_color='white')
+    net.set_options("""
+    var options = {
+      "physics": {
+        "enabled": true
+      },
+      "nodes": {
+        "font": {"size": 16, "face":"Arial"},
+        "shape": "dot",
+        "scaling": {"min": 10, "max": 40}
+      },
+      "edges": {
+        "smooth": {"type":"cubicBezier"},
+        "arrows": {"to": {"enabled": false}}
+      }
+    }
+    """)
+    
+    for bairro in bairros_microrregiao:
+        net.add_node(bairro, label=bairro, title=bairro, color='orange', size=20)
+    
+    for _, row in df_adjacencias_microrregiao.iterrows():
+        net.add_edge(row['bairro_origem'], row['bairro_destino'],
+                     title=f'Peso: {row["peso"]}\nRua: {row["logradouro"]}',
+                     color='lightblue',
+                     width=2,
+                     smooth=True)
+    
+    out_file = out_path / f'out_{str(microrregiao).replace(" ", "_").lower()}.html'
+    net.write_html(str(out_file))
+
+# Geração do grafo relativo a densidade de cada bairro
+df_ego_bairros = pd.read_csv(out_path / 'ego_bairro.csv')
+
+net = Network(height='800px', width='100%', bgcolor='#222222', font_color='white')
+
+net.set_options("""
+var options = {
+  "layout": {
+    "improvedLayout": true
+  },
+  "physics": {
+    "enabled": true,
+    "stabilization": {
+      "enabled": true,
+      "iterations": 2000,
+      "updateInterval": 25,
+      "onlyDynamicEdges": false
+    },
+    "barnesHut": {
+      "gravitationalConstant": -8000,
+      "centralGravity": 0.25,
+      "springLength": 200,
+      "springConstant": 0.03,
+      "avoidOverlap": 1
+    },
+    "minVelocity": 0.75
+  },
+  "nodes": {
+    "font": {"size": 14, "face":"Arial"},
+    "shape": "dot",
+    "scaling": {"min": 10, "max": 80}
+  },
+  "edges": {
+    "smooth": {"type":"cubicBezier"},
+    "arrows": {"to": {"enabled": false}}
+  }
+}
+""")
+
+for _, row in df_ego_bairros.iterrows():
+    bairro = row['bairro']
+    densidade = row['densidade_ego']
+    valor = max(1, densidade * 100)
+    net.add_node(bairro, label=bairro, title=f'{bairro} - densidade: {densidade:.4f}', color='lightgreen', value=valor)
+
+graph_completo = montar_grafo(df_adjacencias)
+
+for origem, viz_list in graph_completo.items():
+    for destino, peso, logradouro in viz_list:
+        if net.get_node(origem) and net.get_node(destino):
+            net.add_edge(origem, destino,
+                         title=f'Peso: {peso}\nRua: {logradouro}',
+                         color='lightblue',
+                         width=1,
+                         smooth=True)
+            
+out_file = out_path / 'densidade_conexoes_bairros.html'
+net.write_html(str(out_file))
+
+# Grafo dos vizinhos - interativo
+net = Network(height='800px', width='100%', bgcolor='#222222', font_color='white')
+net.set_options("""
+var options = {
+    "physics": {"enabled": true},
+    "nodes": {"font": {"size": 14, "face":"Arial"}, "shape": "dot"},
+    "edges": {"smooth": {"type":"cubicBezier"}}
+}
+""")
+
+bairros = sorted(set(df_adjacencias['bairro_origem']).union(set(df_adjacencias['bairro_destino'])))
+for bairro in bairros:
+        net.add_node(bairro, label=bairro, title=bairro, color='orange', size=20)
+
+for _, row in df_adjacencias.iterrows():
+        net.add_edge(row['bairro_origem'], row['bairro_destino'],
+                                 title=f'Peso: {row["peso"]}\\nRua: {row["logradouro"]}',
+                                 color='lightblue', width=2, smooth=True)
+
+tmp = NamedTemporaryFile(delete=False, suffix='.html')
+net.write_html(tmp.name)
+
+with open(tmp.name, 'r', encoding='utf-8') as f:
+        html = f.read()
+
+# script que destaca nó selecionado (vermelho), vizinhos (verde) e desatura os outros (cinza)
+highlight_script = r"""
+<script type="text/javascript">
+// aguardar que a variável 'network' exista no escopo gerado pelo pyvis
+(function waitForNetwork(){
+    if(typeof network === "undefined"){
+        setTimeout(waitForNetwork, 50);
+        return;
+    }
+
+    function resetStyles(){
+        var allNodes = network.body.data.nodes.get();
+        var allEdges = network.body.data.edges.get();
+        var nUpdate = allNodes.map(function(n){ return {id:n.id, color:{background:'orange'}, size:20}; });
+        var eUpdate = allEdges.map(function(e){ return {id:e.id, color:{color:'lightblue'}, width:2}; });
+        network.body.data.nodes.update(nUpdate);
+        network.body.data.edges.update(eUpdate);
+    }
+
+    network.on("click", function(params){
+        if(!params.nodes || params.nodes.length === 0){
+            resetStyles();
+            return;
+        }
+
+        var nodeId = params.nodes[0];
+        var neighbors = network.getConnectedNodes(nodeId);
+        var allNodes = network.body.data.nodes.get();
+        var allEdges = network.body.data.edges.get();
+
+        var nUpdate = [];
+        allNodes.forEach(function(n){
+            if(n.id === nodeId){
+                nUpdate.push({id:n.id, color:{background:'#ff6666'}, size:36}); // selecionado
+            } else if(neighbors.indexOf(n.id) !== -1){
+                nUpdate.push({id:n.id, color:{background:'#00ff66'}, size:28}); // vizinhos
+            } else {
+                nUpdate.push({id:n.id, color:{background:'#777777'}, size:12}); // outros
+            }
+        });
+
+        var eUpdate = [];
+        allEdges.forEach(function(e){
+            // destacar arestas que toquem o nó selecionado ou conectem dois vizinhos selecionados
+            if(e.from === nodeId || e.to === nodeId || neighbors.indexOf(e.from)!==-1 && neighbors.indexOf(e.to)!==-1){
+                eUpdate.push({id:e.id, color:{color:'#ff4444'}, width:4});
+            } else {
+                eUpdate.push({id:e.id, color:{color:'#cccccc'}, width:1});
+            }
+        });
+
+        network.body.data.nodes.update(nUpdate);
+        network.body.data.edges.update(eUpdate);
+    });
+
+    // clique duplo ou tecla Esc reseta
+    network.on("doubleClick", function(){ resetStyles(); });
+    document.addEventListener('keydown', function(evt){
+        if(evt.key === "Escape") resetStyles();
+    });
+
+})();
+</script>
+"""
+
+# inserir o script antes do </body> final
+if "</body>" in html:
+        html = html.replace("</body>", highlight_script + "\n</body>")
+else:
+        html = html + highlight_script
+
+out_file = out_path / 'interactive_bairro_vizinhos.html'
+with open(out_file, 'w', encoding='utf-8') as f:
+        f.write(html)

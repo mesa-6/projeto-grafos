@@ -1,0 +1,28 @@
+{
+    "bairro_origem": "Nova Descoberta",
+    "bairro_destino": "Boa Viagem",
+    "custo": 8.6,
+    "caminho": [
+        "Nova Descoberta",
+        "Casa Amarela",
+        "Tamarineira",
+        "Gracas",
+        "Boa Vista",
+        "Santo Antonio",
+        "Sao Jose",
+        "Cabanga",
+        "Pina",
+        "Boa Viagem"
+    ],
+    "ruas": [
+        "Avenida Norte Miguel Arraes de Alencar",
+        "Avenida Norte Miguel Arraes de Alencar",
+        "Avenida Conselheiro Rosa e Silva",
+        "Avenida Governador Agamenon Magalhães",
+        "Ponte Duarte Coelho",
+        "Avenida Dantas Barreto",
+        "Avenida Engenheiro José Estelita",
+        "Ponte Agamenon Magalhães",
+        "Avenida Boa Viagem"
+    ]
+}

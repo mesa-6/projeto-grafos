@@ -1,0 +1,127 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 800px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "orange", "font": {"color": "white"}, "id": "Engenho do Meio", "label": "Engenho do Meio", "shape": "dot", "size": 20, "title": "Engenho do Meio"}, {"color": "orange", "font": {"color": "white"}, "id": "Varzea", "label": "Varzea", "shape": "dot", "size": 20, "title": "Varzea"}, {"color": "orange", "font": {"color": "white"}, "id": "Caxanga", "label": "Caxanga", "shape": "dot", "size": 20, "title": "Caxanga"}, {"color": "orange", "font": {"color": "white"}, "id": "Torroes", "label": "Torroes", "shape": "dot", "size": 20, "title": "Torroes"}, {"color": "orange", "font": {"color": "white"}, "id": "Zumbi", "label": "Zumbi", "shape": "dot", "size": 20, "title": "Zumbi"}, {"color": "orange", "font": {"color": "white"}, "id": "Cidade Universitaria", "label": "Cidade Universitaria", "shape": "dot", "size": 20, "title": "Cidade Universitaria"}, {"color": "orange", "font": {"color": "white"}, "id": "Prado", "label": "Prado", "shape": "dot", "size": 20, "title": "Prado"}, {"color": "orange", "font": {"color": "white"}, "id": "Madalena", "label": "Madalena", "shape": "dot", "size": 20, "title": "Madalena"}, {"color": "orange", "font": {"color": "white"}, "id": "Iputinga", "label": "Iputinga", "shape": "dot", "size": 20, "title": "Iputinga"}, {"color": "orange", "font": {"color": "white"}, "id": "Ilha do Retiro", "label": "Ilha do Retiro", "shape": "dot", "size": 20, "title": "Ilha do Retiro"}, {"color": "orange", "font": {"color": "white"}, "id": "Cordeiro", "label": "Cordeiro", "shape": "dot", "size": 20, "title": "Cordeiro"}, {"color": "orange", "font": {"color": "white"}, "id": "Torre", "label": "Torre", "shape": "dot", "size": 20, "title": "Torre"}]);
+                  edges = new vis.DataSet([{"color": "lightblue", "from": "Caxanga", "smooth": true, "title": "Peso: 0.8\nRua: Avenida Caxang\u00e1", "to": "Iputinga", "width": 2}, {"color": "lightblue", "from": "Caxanga", "smooth": true, "title": "Peso: 0.9\nRua: Avenida Afonso Olindense", "to": "Varzea", "width": 2}, {"color": "lightblue", "from": "Cidade Universitaria", "smooth": true, "title": "Peso: 0.95\nRua: Avenida M\u00facio Uch\u00f4a Cavalcanti", "to": "Engenho do Meio", "width": 2}, {"color": "lightblue", "from": "Cidade Universitaria", "smooth": true, "title": "Peso: 0.95\nRua: Avenida M\u00facio Uch\u00f4a Cavalcanti", "to": "Iputinga", "width": 2}, {"color": "lightblue", "from": "Cidade Universitaria", "smooth": true, "title": "Peso: 1.95\nRua: Avenida In\u00e1cio de Barros Barreto", "to": "Varzea", "width": 2}, {"color": "lightblue", "from": "Cordeiro", "smooth": true, "title": "Peso: 0.95\nRua: Avenida M\u00facio Uch\u00f4a Cavalcanti", "to": "Engenho do Meio", "width": 2}, {"color": "lightblue", "from": "Cordeiro", "smooth": true, "title": "Peso: 2.0\nRua: Avenida Camar\u00e3o", "to": "Iputinga", "width": 2}, {"color": "lightblue", "from": "Cordeiro", "smooth": true, "title": "Peso: 1.35\nRua: Avenida Engenheiro Abdias de Carvalho", "to": "Prado", "width": 2}, {"color": "lightblue", "from": "Cordeiro", "smooth": true, "title": "Peso: 0.95\nRua: Avenida Beira Rio", "to": "Torre", "width": 2}, {"color": "lightblue", "from": "Cordeiro", "smooth": true, "title": "Peso: 1.35\nRua: Avenida Engenheiro Abdias de Carvalho", "to": "Torroes", "width": 2}, {"color": "lightblue", "from": "Cordeiro", "smooth": true, "title": "Peso: 0.8\nRua: Avenida Caxang\u00e1", "to": "Zumbi", "width": 2}, {"color": "lightblue", "from": "Engenho do Meio", "smooth": true, "title": "Peso: 0.95\nRua: Avenida M\u00facio Uch\u00f4a Cavalcanti", "to": "Iputinga", "width": 2}, {"color": "lightblue", "from": "Engenho do Meio", "smooth": true, "title": "Peso: 1.45\nRua: Avenida Bicenten\u00e1rio da Revolu\u00e7\u00e3o Francesa", "to": "Torroes", "width": 2}, {"color": "lightblue", "from": "Ilha do Retiro", "smooth": true, "title": "Peso: 1.0\nRua: Avenida Beira Rio Deputado Osvaldo Coelho", "to": "Madalena", "width": 2}, {"color": "lightblue", "from": "Ilha do Retiro", "smooth": true, "title": "Peso: 1.35\nRua: Avenida Engenheiro Abdias de Carvalho", "to": "Prado", "width": 2}, {"color": "lightblue", "from": "Iputinga", "smooth": true, "title": "Peso: 0.8\nRua: Avenida Caxang\u00e1", "to": "Varzea", "width": 2}, {"color": "lightblue", "from": "Madalena", "smooth": true, "title": "Peso: 1.35\nRua: Avenida Engenheiro Abdias de Carvalho", "to": "Prado", "width": 2}, {"color": "lightblue", "from": "Madalena", "smooth": true, "title": "Peso: 1.0\nRua: Avenida Beira Rio Governador Eduardo Campos", "to": "Torre", "width": 2}, {"color": "lightblue", "from": "Madalena", "smooth": true, "title": "Peso: 0.8\nRua: Avenida Caxang\u00e1", "to": "Zumbi", "width": 2}, {"color": "lightblue", "from": "Prado", "smooth": true, "title": "Peso: 3.5\nRua: Rua Abdias de Oliveira", "to": "Zumbi", "width": 2}, {"color": "lightblue", "from": "Torre", "smooth": true, "title": "Peso: 3.1\nRua: Rua Ant\u00f4nio Machado Gomes da Silva", "to": "Zumbi", "width": 2}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"physics": {"enabled": true}, "nodes": {"font": {"size": 16, "face": "Arial"}, "shape": "dot", "scaling": {"min": 10, "max": 40}}, "edges": {"smooth": {"type": "cubicBezier"}, "arrows": {"to": {"enabled": false}}}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

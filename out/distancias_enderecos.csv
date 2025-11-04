@@ -1,0 +1,6 @@
+bairro_origem,bairro_destino,custo,caminho
+Casa Amarela,Pau Ferro,5.35,Casa Amarela -> Nova Descoberta -> Corrego do Jenipapo -> Guabiraba -> Pau Ferro
+Recife,Dois Unidos,9.6,Recife -> Santo Amaro -> Boa Vista -> Gracas -> Tamarineira -> Arruda -> Agua Fria -> Beberibe -> Dois Unidos
+Peixinhos,Brasilia Teimosa,9.55,Peixinhos -> Campo Grande -> Santo Amaro -> Santo Antonio -> Sao Jose -> Cabanga -> Pina -> Brasilia Teimosa
+Fundao,Recife,7.5,Fundao -> Agua Fria -> Arruda -> Tamarineira -> Gracas -> Boa Vista -> Santo Amaro -> Recife
+Nova Descoberta,Boa Viagem,8.6,Nova Descoberta -> Casa Amarela -> Tamarineira -> Gracas -> Boa Vista -> Santo Antonio -> Sao Jose -> Cabanga -> Pina -> Boa Viagem

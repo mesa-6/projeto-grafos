@@ -306,11 +306,37 @@ net.write_html(str(out_file))
 
 # Grafo dos vizinhos - interativo
 net = Network(height='800px', width='100%', bgcolor='#222222', font_color='white')
+
 net.set_options("""
 var options = {
-    "physics": {"enabled": true},
-    "nodes": {"font": {"size": 14, "face":"Arial"}, "shape": "dot"},
-    "edges": {"smooth": {"type":"cubicBezier"}}
+  "layout": {"improvedLayout": true},
+  "physics": {
+    "enabled": true,
+    "stabilization": {
+      "enabled": true,
+      "iterations": 2500,
+      "updateInterval": 50,
+      "onlyDynamicEdges": false
+    },
+    "barnesHut": {
+      "gravitationalConstant": -12000,
+      "centralGravity": 0.15,
+      "springLength": 300,
+      "springConstant": 0.04,
+      "avoidOverlap": 1.2
+    },
+    "minVelocity": 0.75
+  },
+  "nodes": {
+    "font": {"size": 20, "face":"Arial"},
+    "shape": "dot",
+    "scaling": {"min": 12, "max": 40}
+  },
+  "edges": {
+    "smooth": {"type":"cubicBezier"},
+    "arrows": {"to": {"enabled": false}},
+    "color": {"inherit": false}
+  }
 }
 """)
 

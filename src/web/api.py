@@ -33,3 +33,45 @@ def api_edges(graph: Graph = Depends(get_graph)):
     edges = graph.edges_list()
 
     return {"count": len(edges), "edges": edges}
+
+@app.get("/dijkstra", tags=["algorithms"])
+def api_dijkstra(orig: str = Query(...), dest: str = Query(...), graph: Graph = Depends(get_graph)):
+    # Dijkstra: /dijkstra?orig=A&dest=B
+    origem_n = graph.normalize_node(orig)
+    dest_n = graph.normalize_node(dest)
+
+    if not graph.has_node(origem_n) or not graph.has_node(dest_n):
+        raise HTTPException(status_code=404, detail="origem ou destino não encontrados no grafo")
+
+    path_nodes, path_ruas, custo = graph.dijkstra(origem_n, dest_n)
+
+    return {"orig": origem_n, "dest": dest_n, "custo": custo, "caminho": path_nodes, "ruas": path_ruas}
+
+@app.get("/ego/{node}", tags=["algorithms"])
+def api_ego(node: str, graph: Graph = Depends(get_graph)):
+    # Retorna métricas a respeito da ego-network de um bairro
+    n = graph.normalize_node(node)
+
+    if not graph.has_node(n):
+        raise HTTPException(status_code=404, detail="nó não encontrado")
+    
+    metrics = graph.ego_metrics(n)
+
+    return metrics
+
+@app.get("/microrregiao/{mr_id}", tags=["algorithms"])
+def api_microrregiao(mr_id: str, graph: Graph = Depends(get_graph)):
+    # Retorna métricas a respeito de uma microrregião
+    stats = graph.microrregiao_stats(mr_id)
+
+    if stats is None:
+        raise HTTPException(status_code=404, detail="microrregião não encontrada")
+    
+    return stats
+
+@app.post("/export/static-html", tags=["export"])
+def api_export_static_html(graph: Graph = Depends(get_graph)):
+    # Endpoint que gera todos os entregáveis que são automatizados
+    files = export_all_pyvis_htmls(graph)
+    
+    return {"generated": files}

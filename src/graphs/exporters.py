@@ -95,4 +95,10 @@ def export_route_tree_html(caminho: List[str], logradouros: List[str], out_file:
     net.write_html(out_file)
 
     return out_file
-
+# Função usada pela api para gerar os entregáveis
+def export_all_pyvis_htmls(graph) -> List[str]:
+    generated = []
+    generated.append(export_full_graph_html(graph))
+    generated += export_per_microrregiao_htmls(graph)
+    
+    return generated

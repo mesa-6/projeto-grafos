@@ -50,3 +50,30 @@ def export_full_graph_html(graph, out_file: Path = None) -> str:
     net.write_html(out_file)
 
     return out_file
+
+# Gera arquivos HTML por microrregião 
+def export_per_microrregiao_htmls(graph) -> List[str]:
+    generated = []
+  
+    mr_map = {}
+
+    for b, mr in graph.bairro_to_microrregiao.items():
+        mr_map.setdefault(mr, []).append(b)
+
+    for mr, bairros in mr_map.items():
+        net = _basic_pyvis_network(title=f"Microrregiao {mr}")
+        
+        for b in bairros:
+            net.add_node(b, label=b, title=b, size=18, color="orange")
+        
+        for e in graph.edges_list():
+            if e["bairro_origem"] in bairros and e["bairro_destino"] in bairros:
+                net.add_edge(e["bairro_origem"], e["bairro_destino"], title=f'Rua: {e["logradouro"]}\\nPeso:{e["peso"]}', value=max(1.0, float(e["peso"])))
+
+        fname = OUT_DIR / f'microrregiao_{mr}.html'
+
+        net.write_html(str(fname))
+        generated.append(str(fname))
+    
+    return generated
+

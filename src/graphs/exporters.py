@@ -74,6 +74,25 @@ def export_per_microrregiao_htmls(graph) -> List[str]:
 
         net.write_html(str(fname))
         generated.append(str(fname))
+
     
     return generated
+# Gera um HTML simples que desenha a 'árvore/linha' do percurso Nova Descoberta -> Boa Viagem
+def export_route_tree_html(caminho: List[str], logradouros: List[str], out_file: Path) -> str:
+    net = _basic_pyvis_network(title="Percurso")
+    # Nós na ordem do caminho
+    for i, node in enumerate(caminho):
+        size = 32 if (i == 0 or i == len(caminho)-1) else 20
+        color = "#00ff66" if i == 0 else ("#ff6666" if i == len(caminho)-1 else "orange")
+        net.add_node(node, label=node, title=node, physics=False, color=color, size=size)
+    
+    for i in range(len(caminho)-1):
+        u = caminho[i]; v = caminho[i+1]
+        rua = logradouros[i] if i < len(logradouros) else ""
+        net.add_edge(u, v, title=f'Rua: {rua}', color="red", width=4)
+
+    out_file = str(out_file)
+    net.write_html(out_file)
+
+    return out_file
 

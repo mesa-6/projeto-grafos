@@ -1,0 +1,127 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 800px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "orange", "font": {"color": "white"}, "id": "TOTO", "label": "TOTO", "shape": "dot", "size": 18, "title": "TOTO"}, {"color": "orange", "font": {"color": "white"}, "id": "TEJIPIO", "label": "TEJIPIO", "shape": "dot", "size": 18, "title": "TEJIPIO"}, {"color": "orange", "font": {"color": "white"}, "id": "SANCHO", "label": "SANCHO", "shape": "dot", "size": 18, "title": "SANCHO"}, {"color": "orange", "font": {"color": "white"}, "id": "JARDIM SAO PAULO", "label": "JARDIM SAO PAULO", "shape": "dot", "size": 18, "title": "JARDIM SAO PAULO"}, {"color": "orange", "font": {"color": "white"}, "id": "CURADO", "label": "CURADO", "shape": "dot", "size": 18, "title": "CURADO"}, {"color": "orange", "font": {"color": "white"}, "id": "COQUEIRAL", "label": "COQUEIRAL", "shape": "dot", "size": 18, "title": "COQUEIRAL"}, {"color": "orange", "font": {"color": "white"}, "id": "BARRO", "label": "BARRO", "shape": "dot", "size": 18, "title": "BARRO"}, {"color": "orange", "font": {"color": "white"}, "id": "JIQUIA", "label": "JIQUIA", "shape": "dot", "size": 18, "title": "JIQUIA"}, {"color": "orange", "font": {"color": "white"}, "id": "CACOTE", "label": "CACOTE", "shape": "dot", "size": 18, "title": "CACOTE"}, {"color": "orange", "font": {"color": "white"}, "id": "AREIAS", "label": "AREIAS", "shape": "dot", "size": 18, "title": "AREIAS"}, {"color": "orange", "font": {"color": "white"}, "id": "SAN MARTIN", "label": "SAN MARTIN", "shape": "dot", "size": 18, "title": "SAN MARTIN"}, {"color": "orange", "font": {"color": "white"}, "id": "MUSTARDINHA", "label": "MUSTARDINHA", "shape": "dot", "size": 18, "title": "MUSTARDINHA"}, {"color": "orange", "font": {"color": "white"}, "id": "MANGUEIRA", "label": "MANGUEIRA", "shape": "dot", "size": 18, "title": "MANGUEIRA"}, {"color": "orange", "font": {"color": "white"}, "id": "BONGI", "label": "BONGI", "shape": "dot", "size": 18, "title": "BONGI"}, {"color": "orange", "font": {"color": "white"}, "id": "AFOGADOS", "label": "AFOGADOS", "shape": "dot", "size": 18, "title": "AFOGADOS"}, {"color": "orange", "font": {"color": "white"}, "id": "ESTANCIA", "label": "ESTANCIA", "shape": "dot", "size": 18, "title": "ESTANCIA"}]);
+                  edges = new vis.DataSet([{"from": "AFOGADOS", "title": "Rua: Estrada do Bongi Armando da Fonte\\nPeso:2.65", "to": "BONGI", "value": 2.65}, {"from": "AFOGADOS", "title": "Rua: Avenida Central\\nPeso:1.3", "to": "JIQUIA", "value": 1.3}, {"from": "AFOGADOS", "title": "Rua: Avenida Central\\nPeso:1.3", "to": "MANGUEIRA", "value": 1.3}, {"from": "AFOGADOS", "title": "Rua: Avenida Mustardinha\\nPeso:2.6", "to": "MUSTARDINHA", "value": 2.6}, {"from": "BONGI", "title": "Rua: Avenida C\u00f4nsul Vilares Fragoso\\nPeso:2.05", "to": "MUSTARDINHA", "value": 2.05}, {"from": "BONGI", "title": "Rua: Avenida C\u00f4nsul Vilares Fragoso\\nPeso:2.05", "to": "SAN MARTIN", "value": 2.05}, {"from": "AREIAS", "title": "Rua: Avenida Central\\nPeso:1.3", "to": "JIQUIA", "value": 1.3}, {"from": "ESTANCIA", "title": "Rua: Avenida Central\\nPeso:1.3", "to": "JIQUIA", "value": 1.3}, {"from": "JIQUIA", "title": "Rua: Avenida Central\\nPeso:1.3", "to": "MANGUEIRA", "value": 1.3}, {"from": "JIQUIA", "title": "Rua: Avenida General San Martin\\nPeso:0.9", "to": "SAN MARTIN", "value": 1.0}, {"from": "MANGUEIRA", "title": "Rua: Avenida Manoel Goncalves da Luz\\nPeso:1.25", "to": "MUSTARDINHA", "value": 1.25}, {"from": "MANGUEIRA", "title": "Rua: Rua Bom Jardim\\nPeso:3.5", "to": "SAN MARTIN", "value": 3.5}, {"from": "MUSTARDINHA", "title": "Rua: Avenida C\u00f4nsul Vilares Fragoso\\nPeso:2.05", "to": "SAN MARTIN", "value": 2.05}, {"from": "AREIAS", "title": "Rua: Avenida Central\\nPeso:1.3", "to": "BARRO", "value": 1.3}, {"from": "AREIAS", "title": "Rua: Avenida Capit\u00e3o Greg\u00f3rio de Caldas\\nPeso:1.2", "to": "CACOTE", "value": 1.2}, {"from": "AREIAS", "title": "Rua: Avenida Central\\nPeso:1.3", "to": "ESTANCIA", "value": 1.3}, {"from": "AREIAS", "title": "Rua: Avenida Central\\nPeso:1.3", "to": "JARDIM SAO PAULO", "value": 1.3}, {"from": "BARRO", "title": "Rua: Avenida Central\\nPeso:1.3", "to": "JARDIM SAO PAULO", "value": 1.3}, {"from": "BARRO", "title": "Rua: Avenida Central\\nPeso:1.3", "to": "TEJIPIO", "value": 1.3}, {"from": "ESTANCIA", "title": "Rua: Avenida Jo\u00e3o Cabral de Melo Neto\\nPeso:2.45", "to": "SAN MARTIN", "value": 2.45}, {"from": "CURADO", "title": "Rua: Avenida Central\\nPeso:1.3", "to": "JARDIM SAO PAULO", "value": 1.3}, {"from": "JARDIM SAO PAULO", "title": "Rua: Avenida Jo\u00e3o Cabral de Melo Neto\\nPeso:2.45", "to": "SAN MARTIN", "value": 2.45}, {"from": "JARDIM SAO PAULO", "title": "Rua: Avenida Central\\nPeso:1.3", "to": "TEJIPIO", "value": 1.3}, {"from": "COQUEIRAL", "title": "Rua: Avenida Central\\nPeso:1.3", "to": "TEJIPIO", "value": 1.3}, {"from": "SANCHO", "title": "Rua: Avenida Liberdade\\nPeso:2.1", "to": "TEJIPIO", "value": 2.1}, {"from": "CURADO", "title": "Rua: Avenida Recife\\nPeso:1.35", "to": "SAN MARTIN", "value": 1.35}, {"from": "CURADO", "title": "Rua: Avenida Liberdade\\nPeso:2.1", "to": "SANCHO", "value": 2.1}, {"from": "CURADO", "title": "Rua: Avenida Liberdade\\nPeso:2.1", "to": "TOTO", "value": 2.1}, {"from": "COQUEIRAL", "title": "Rua: Rua Apr\u00edgio Guimar\u00e3es\\nPeso:2.1", "to": "SANCHO", "value": 2.1}, {"from": "COQUEIRAL", "title": "Rua: Rua Alto do Para\u00edso\\nPeso:3.45", "to": "TOTO", "value": 3.45}, {"from": "SANCHO", "title": "Rua: Avenida Liberdade\\nPeso:2.1", "to": "TOTO", "value": 2.1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"nodes": {"font": {"size": 14}}, "edges": {"smooth": {"enabled": true}}, "physics": {"enabled": true, "stabilization": {"iterations": 200}}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

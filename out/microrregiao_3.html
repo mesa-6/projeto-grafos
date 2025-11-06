@@ -1,0 +1,127 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 800px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "orange", "font": {"color": "white"}, "id": "ALTO JOSE BONIFACIO", "label": "ALTO JOSE BONIFACIO", "shape": "dot", "size": 18, "title": "ALTO JOSE BONIFACIO"}, {"color": "orange", "font": {"color": "white"}, "id": "MANGABEIRA", "label": "MANGABEIRA", "shape": "dot", "size": 18, "title": "MANGABEIRA"}, {"color": "orange", "font": {"color": "white"}, "id": "MORRO DA CONCEICAO", "label": "MORRO DA CONCEICAO", "shape": "dot", "size": 18, "title": "MORRO DA CONCEICAO"}, {"color": "orange", "font": {"color": "white"}, "id": "VASCO DA GAMA", "label": "VASCO DA GAMA", "shape": "dot", "size": 18, "title": "VASCO DA GAMA"}, {"color": "orange", "font": {"color": "white"}, "id": "BREJO DA GUABIRABA", "label": "BREJO DA GUABIRABA", "shape": "dot", "size": 18, "title": "BREJO DA GUABIRABA"}, {"color": "orange", "font": {"color": "white"}, "id": "BREJO DE BEBERIBE", "label": "BREJO DE BEBERIBE", "shape": "dot", "size": 18, "title": "BREJO DE BEBERIBE"}, {"color": "orange", "font": {"color": "white"}, "id": "NOVA DESCOBERTA", "label": "NOVA DESCOBERTA", "shape": "dot", "size": 18, "title": "NOVA DESCOBERTA"}, {"color": "orange", "font": {"color": "white"}, "id": "GUABIRABA", "label": "GUABIRABA", "shape": "dot", "size": 18, "title": "GUABIRABA"}, {"color": "orange", "font": {"color": "white"}, "id": "MACAXEIRA", "label": "MACAXEIRA", "shape": "dot", "size": 18, "title": "MACAXEIRA"}, {"color": "orange", "font": {"color": "white"}, "id": "PASSARINHO", "label": "PASSARINHO", "shape": "dot", "size": 18, "title": "PASSARINHO"}, {"color": "orange", "font": {"color": "white"}, "id": "PAU-FERRO", "label": "PAU-FERRO", "shape": "dot", "size": 18, "title": "PAU-FERRO"}, {"color": "orange", "font": {"color": "white"}, "id": "TAMARINEIRA", "label": "TAMARINEIRA", "shape": "dot", "size": 18, "title": "TAMARINEIRA"}, {"color": "orange", "font": {"color": "white"}, "id": "CORREGO DO JENIPAPO", "label": "CORREGO DO JENIPAPO", "shape": "dot", "size": 18, "title": "CORREGO DO JENIPAPO"}, {"color": "orange", "font": {"color": "white"}, "id": "SITIO DOS PINTOS", "label": "SITIO DOS PINTOS", "shape": "dot", "size": 18, "title": "SITIO DOS PINTOS"}, {"color": "orange", "font": {"color": "white"}, "id": "ALTO JOSE DO PINHO", "label": "ALTO JOSE DO PINHO", "shape": "dot", "size": 18, "title": "ALTO JOSE DO PINHO"}, {"color": "orange", "font": {"color": "white"}, "id": "POCO", "label": "POCO", "shape": "dot", "size": 18, "title": "POCO"}, {"color": "orange", "font": {"color": "white"}, "id": "SANTANA", "label": "SANTANA", "shape": "dot", "size": 18, "title": "SANTANA"}, {"color": "orange", "font": {"color": "white"}, "id": "AFLITOS", "label": "AFLITOS", "shape": "dot", "size": 18, "title": "AFLITOS"}, {"color": "orange", "font": {"color": "white"}, "id": "ALTO DO MANDU", "label": "ALTO DO MANDU", "shape": "dot", "size": 18, "title": "ALTO DO MANDU"}, {"color": "orange", "font": {"color": "white"}, "id": "APIPUCOS", "label": "APIPUCOS", "shape": "dot", "size": 18, "title": "APIPUCOS"}, {"color": "orange", "font": {"color": "white"}, "id": "CASA AMARELA", "label": "CASA AMARELA", "shape": "dot", "size": 18, "title": "CASA AMARELA"}, {"color": "orange", "font": {"color": "white"}, "id": "DERBY", "label": "DERBY", "shape": "dot", "size": 18, "title": "DERBY"}, {"color": "orange", "font": {"color": "white"}, "id": "CASA FORTE", "label": "CASA FORTE", "shape": "dot", "size": 18, "title": "CASA FORTE"}, {"color": "orange", "font": {"color": "white"}, "id": "ESPINHEIRO", "label": "ESPINHEIRO", "shape": "dot", "size": 18, "title": "ESPINHEIRO"}, {"color": "orange", "font": {"color": "white"}, "id": "GRACAS", "label": "GRACAS", "shape": "dot", "size": 18, "title": "GRACAS"}, {"color": "orange", "font": {"color": "white"}, "id": "JAQUEIRA", "label": "JAQUEIRA", "shape": "dot", "size": 18, "title": "JAQUEIRA"}, {"color": "orange", "font": {"color": "white"}, "id": "MONTEIRO", "label": "MONTEIRO", "shape": "dot", "size": 18, "title": "MONTEIRO"}, {"color": "orange", "font": {"color": "white"}, "id": "PARNAMIRIM", "label": "PARNAMIRIM", "shape": "dot", "size": 18, "title": "PARNAMIRIM"}, {"color": "orange", "font": {"color": "white"}, "id": "DOIS IRMAOS", "label": "DOIS IRMAOS", "shape": "dot", "size": 18, "title": "DOIS IRMAOS"}]);
+                  edges = new vis.DataSet([{"from": "AFLITOS", "title": "Rua: Avenida Conselheiro Rosa e Silva\\nPeso:0.9", "to": "ESPINHEIRO", "value": 1.0}, {"from": "AFLITOS", "title": "Rua: Avenida Conselheiro Rosa e Silva\\nPeso:0.9", "to": "GRACAS", "value": 1.0}, {"from": "ESPINHEIRO", "title": "Rua: Avenida Conselheiro Rosa e Silva\\nPeso:0.9", "to": "GRACAS", "value": 1.0}, {"from": "DERBY", "title": "Rua: Avenida Beira Rio\\nPeso:0.95", "to": "GRACAS", "value": 1.0}, {"from": "GRACAS", "title": "Rua: Avenida Conselheiro Rosa e Silva\\nPeso:0.9", "to": "JAQUEIRA", "value": 1.0}, {"from": "GRACAS", "title": "Rua: Avenida Conselheiro Rosa e Silva\\nPeso:0.9", "to": "TAMARINEIRA", "value": 1.0}, {"from": "ALTO JOSE BONIFACIO", "title": "Rua: Rua C\u00f3rrego Jos\u00e9 Grande\\nPeso:3.25", "to": "ALTO JOSE DO PINHO", "value": 3.25}, {"from": "ALTO JOSE BONIFACIO", "title": "Rua: Avenida Vereador Otac\u00edlio Azevedo\\nPeso:2.1", "to": "BREJO DE BEBERIBE", "value": 2.1}, {"from": "ALTO JOSE BONIFACIO", "title": "Rua: Rua Alex\u00e2nia\\nPeso:3.05", "to": "MORRO DA CONCEICAO", "value": 3.05}, {"from": "ALTO JOSE BONIFACIO", "title": "Rua: Avenida Vereador Otac\u00edlio Azevedo\\nPeso:2.1", "to": "VASCO DA GAMA", "value": 2.1}, {"from": "ALTO JOSE DO PINHO", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "CASA AMARELA", "value": 1.0}, {"from": "ALTO JOSE DO PINHO", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "MANGABEIRA", "value": 1.0}, {"from": "ALTO JOSE DO PINHO", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "MORRO DA CONCEICAO", "value": 1.0}, {"from": "ALTO JOSE DO PINHO", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "TAMARINEIRA", "value": 1.0}, {"from": "BREJO DA GUABIRABA", "title": "Rua: Avenida Cana\u00e3\\nPeso:2.05", "to": "BREJO DE BEBERIBE", "value": 2.05}, {"from": "BREJO DE BEBERIBE", "title": "Rua: Rua Agrol\u00e2ndia\\nPeso:3.0", "to": "NOVA DESCOBERTA", "value": 3.0}, {"from": "BREJO DE BEBERIBE", "title": "Rua: Avenida Cana\u00e3\\nPeso:2.05", "to": "PASSARINHO", "value": 2.05}, {"from": "BREJO DE BEBERIBE", "title": "Rua: Avenida Vereador Otac\u00edlio Azevedo\\nPeso:2.1", "to": "VASCO DA GAMA", "value": 2.1}, {"from": "CASA AMARELA", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "MORRO DA CONCEICAO", "value": 1.0}, {"from": "MORRO DA CONCEICAO", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "VASCO DA GAMA", "value": 1.0}, {"from": "CASA AMARELA", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "VASCO DA GAMA", "value": 1.0}, {"from": "NOVA DESCOBERTA", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "VASCO DA GAMA", "value": 1.0}, {"from": "ALTO DO MANDU", "title": "Rua: Avenida Doutor Eurico Chaves\\nPeso:1.5", "to": "CASA AMARELA", "value": 1.5}, {"from": "CASA AMARELA", "title": "Rua: Estrada das Ubaias\\nPeso:1.5", "to": "CASA FORTE", "value": 1.5}, {"from": "CASA AMARELA", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "MANGABEIRA", "value": 1.0}, {"from": "CASA AMARELA", "title": "Rua: Avenida Doutor Eurico Chaves\\nPeso:1.5", "to": "MONTEIRO", "value": 1.5}, {"from": "CASA AMARELA", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "NOVA DESCOBERTA", "value": 1.0}, {"from": "CASA AMARELA", "title": "Rua: Estrada do Encanamento\\nPeso:1.45", "to": "PARNAMIRIM", "value": 1.45}, {"from": "CASA AMARELA", "title": "Rua: Estrada do Encanamento\\nPeso:1.45", "to": "POCO", "value": 1.45}, {"from": "CASA AMARELA", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "TAMARINEIRA", "value": 1.0}, {"from": "MANGABEIRA", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "TAMARINEIRA", "value": 1.0}, {"from": "JAQUEIRA", "title": "Rua: Avenida Conselheiro Rosa e Silva\\nPeso:0.9", "to": "TAMARINEIRA", "value": 1.0}, {"from": "PARNAMIRIM", "title": "Rua: Rua Afonso Celso\\nPeso:2.1", "to": "TAMARINEIRA", "value": 2.1}, {"from": "ALTO DO MANDU", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "APIPUCOS", "value": 1.0}, {"from": "ALTO DO MANDU", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "MACAXEIRA", "value": 1.0}, {"from": "ALTO DO MANDU", "title": "Rua: Avenida Doutor Eurico Chaves\\nPeso:1.5", "to": "MONTEIRO", "value": 1.5}, {"from": "ALTO DO MANDU", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "NOVA DESCOBERTA", "value": 1.0}, {"from": "APIPUCOS", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "CORREGO DO JENIPAPO", "value": 1.0}, {"from": "APIPUCOS", "title": "Rua: Avenida da Recupera\u00e7\u00e3o\\nPeso:1.25", "to": "DOIS IRMAOS", "value": 1.25}, {"from": "APIPUCOS", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "MACAXEIRA", "value": 1.0}, {"from": "APIPUCOS", "title": "Rua: Rua Mandacaru\\nPeso:2.65", "to": "MONTEIRO", "value": 2.65}, {"from": "CORREGO DO JENIPAPO", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "MACAXEIRA", "value": 1.0}, {"from": "MACAXEIRA", "title": "Rua: Avenida Jos\u00e9lia\\nPeso:2.15", "to": "NOVA DESCOBERTA", "value": 2.15}, {"from": "MONTEIRO", "title": "Rua: Avenida Dezessete de Agosto\\nPeso:0.9", "to": "POCO", "value": 1.0}, {"from": "BREJO DA GUABIRABA", "title": "Rua: Rua Alpestre\\nPeso:3.05", "to": "NOVA DESCOBERTA", "value": 3.05}, {"from": "CORREGO DO JENIPAPO", "title": "Rua: Avenida Norte Miguel Arraes de Alencar\\nPeso:0.8", "to": "NOVA DESCOBERTA", "value": 1.0}, {"from": "BREJO DA GUABIRABA", "title": "Rua: Avenida da Recupera\u00e7\u00e3o\\nPeso:1.25", "to": "CORREGO DO JENIPAPO", "value": 1.25}, {"from": "CORREGO DO JENIPAPO", "title": "Rua: Avenida da Recupera\u00e7\u00e3o\\nPeso:1.25", "to": "DOIS IRMAOS", "value": 1.25}, {"from": "CORREGO DO JENIPAPO", "title": "Rua: Avenida da Recupera\u00e7\u00e3o\\nPeso:1.25", "to": "GUABIRABA", "value": 1.25}, {"from": "DOIS IRMAOS", "title": "Rua: Avenida Embaixador Assis Chateaubriand\\nPeso:2.15", "to": "GUABIRABA", "value": 2.15}, {"from": "BREJO DA GUABIRABA", "title": "Rua: Avenida Embaixador Assis Chateaubriand\\nPeso:2.15", "to": "GUABIRABA", "value": 2.15}, {"from": "BREJO DA GUABIRABA", "title": "Rua: Avenida Cana\u00e3\\nPeso:2.05", "to": "PASSARINHO", "value": 2.05}, {"from": "GUABIRABA", "title": "Rua: Avenida da Recupera\u00e7\u00e3o\\nPeso:1.25", "to": "PASSARINHO", "value": 1.25}, {"from": "CASA FORTE", "title": "Rua: Avenida Dezessete de Agosto\\nPeso:0.9", "to": "PARNAMIRIM", "value": 1.0}, {"from": "CASA FORTE", "title": "Rua: Avenida Dezessete de Agosto\\nPeso:0.9", "to": "POCO", "value": 1.0}, {"from": "CASA FORTE", "title": "Rua: Avenida Dezessete de Agosto\\nPeso:0.9", "to": "SANTANA", "value": 1.0}, {"from": "JAQUEIRA", "title": "Rua: Avenida Parnamirim\\nPeso:0.85", "to": "PARNAMIRIM", "value": 1.0}, {"from": "PARNAMIRIM", "title": "Rua: Avenida Dezessete de Agosto\\nPeso:0.9", "to": "SANTANA", "value": 1.0}, {"from": "POCO", "title": "Rua: Avenida Dezessete de Agosto\\nPeso:0.9", "to": "SANTANA", "value": 1.0}, {"from": "JAQUEIRA", "title": "Rua: Ponte do Vint\u00e9m\\nPeso:1.2", "to": "SANTANA", "value": 1.2}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"nodes": {"font": {"size": 14}}, "edges": {"smooth": {"enabled": true}}, "physics": {"enabled": true, "stabilization": {"iterations": 200}}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

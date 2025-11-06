@@ -1,95 +1,95 @@
 bairro,grau,ordem_ego,tamanho_ego,densidade_ego
-Aflitos,4,5,9,0.9
-Afogados,10,11,18,0.3273
-Alto Jose Bonifacio,6,7,13,0.619
-Alto Jose do Pinho,7,8,16,0.5714
-Alto Santa Terezinha,6,7,13,0.619
-Alto do Mandu,5,6,10,0.6667
-Apipucos,7,8,14,0.5
-Areias,7,8,13,0.4643
-Arruda,8,9,16,0.4444
-Barro,5,6,9,0.6
-Beberibe,4,5,7,0.7
-Boa Viagem,4,5,6,0.6
-Boa Vista,9,10,18,0.4
-Bomba do Hemeterio,5,6,10,0.6667
-Bongi,4,5,8,0.8
-Brasilia Teimosa,1,2,1,1.0
-Brejo da Guabiraba,5,6,10,0.6667
-Brejo de Beberibe,7,8,14,0.5
-Cabanga,3,4,4,0.6667
-Cajueiro,3,4,5,0.8333
-Campina do Barreto,5,6,9,0.6
-Campo Grande,7,8,14,0.5
-Casa Amarela,11,12,23,0.3485
-Casa Forte,4,5,8,0.8
-Caxanga,5,6,9,0.6
-Cacote,3,4,6,1.0
-Cidade Universitaria,4,5,8,0.8
-Coelhos,5,6,10,0.6667
-Cohab - Ibura de Cima,3,4,5,0.8333
-Coqueiral,3,4,5,0.8333
-Cordeiro,8,9,15,0.4167
-Curado,8,9,14,0.3889
-Corrego do Jenipapo,6,7,12,0.5714
-Derby,5,6,11,0.7333
-Dois Irmaos,5,6,9,0.6
-Dois Unidos,4,5,7,0.7
-Encruzilhada,8,9,19,0.5278
-Engenho do Meio,5,6,10,0.6667
-Espinheiro,6,7,13,0.619
-Estancia,3,4,5,0.8333
-Fundao,4,5,8,0.8
-Gracas,10,11,22,0.4
-Guabiraba,5,6,8,0.5333
-Hipodromo,3,4,6,1.0
-Ibura,8,9,17,0.4722
-Ilha Joana Bezerra,6,7,12,0.5714
-Ilha do Leite,4,5,8,0.8
-Ilha do Retiro,6,7,13,0.619
-Imbiribeira,4,5,6,0.6
-Iputinga,7,8,13,0.4643
-Jaqueira,5,6,10,0.6667
-Jardim Sao Paulo,5,6,8,0.5333
-Jiquia,5,6,9,0.6
-Linha do Tiro,6,7,12,0.5714
-Macaxeira,4,5,8,0.8
-Madalena,7,8,15,0.5357
-Mangabeira,5,6,11,0.7333
-Mangueira,4,5,8,0.8
-Monteiro,5,6,9,0.6
-Morro da Conceicao,5,6,11,0.7333
-Mustardinha,4,5,8,0.8
-Nova Descoberta,7,8,14,0.5
-Parnamirim,5,6,10,0.6667
-Ponto de Parada,6,7,13,0.619
-Porto da Madeira,4,5,7,0.7
-Poco,4,5,7,0.7
-Prado,7,8,14,0.5
-Recife,3,4,5,0.8333
-Rosarinho,5,6,11,0.7333
-San Martin,10,11,19,0.3455
-Sancho,4,5,7,0.7
-Santana,6,7,11,0.5238
-Santo Amaro,7,8,13,0.4643
-Santo Antonio,5,6,10,0.6667
-Torre,6,7,12,0.5714
-Sao Jose,6,7,11,0.5238
-Vasco da Gama,5,6,10,0.6667
-Tamarineira,9,10,19,0.4222
-Agua Fria,8,9,16,0.4444
-Ipsep,4,5,8,0.8
-Peixinhos,3,4,5,0.8333
-Tejipio,4,5,6,0.6
-Jordao,3,4,5,0.8333
-Pina,3,4,3,0.5
-Paissandu,6,7,13,0.619
-Soledade,2,3,3,1.0
-Passarinho,4,5,7,0.7
-Torreao,4,5,8,0.8
-Sitio dos Pintos - Sao Bras,2,3,3,1.0
-Varzea,4,5,7,0.7
-Toto,3,4,5,0.8333
-Torroes,4,5,8,0.8
-Zumbi,4,5,8,0.8
-Pau Ferro,1,2,1,1.0
+AFLITOS,4,5,0,0.0
+AFOGADOS,10,11,0,0.0
+AGUA FRIA,8,9,0,0.0
+ALTO DO MANDU,5,6,0,0.0
+ALTO JOSE BONIFACIO,6,7,0,0.0
+ALTO JOSE DO PINHO,7,8,0,0.0
+ALTO SANTA TEREZINHA,6,7,0,0.0
+APIPUCOS,7,8,0,0.0
+AREIAS,7,8,0,0.0
+ARRUDA,8,9,0,0.0
+BARRO,5,6,0,0.0
+BEBERIBE,4,5,0,0.0
+BOA VIAGEM,4,5,0,0.0
+BOA VISTA,9,10,0,0.0
+BOMBA DO HEMETERIO,5,6,0,0.0
+BONGI,4,5,0,0.0
+BRASILIA TEIMOSA,1,2,0,0.0
+BREJO DA GUABIRABA,5,6,0,0.0
+BREJO DE BEBERIBE,7,8,0,0.0
+CABANGA,3,4,0,0.0
+CACOTE,3,4,0,0.0
+CAJUEIRO,3,4,0,0.0
+CAMPINA DO BARRETO,5,6,0,0.0
+CAMPO GRANDE,7,8,0,0.0
+CASA AMARELA,11,12,0,0.0
+CASA FORTE,4,5,0,0.0
+CAXANGA,5,6,0,0.0
+CIDADE UNIVERSITARIA,4,5,0,0.0
+COELHOS,5,6,0,0.0
+COHAB - IBURA DE CIMA,3,4,0,0.0
+COQUEIRAL,3,4,0,0.0
+CORDEIRO,8,9,0,0.0
+CORREGO DO JENIPAPO,6,7,0,0.0
+CURADO,8,9,0,0.0
+DERBY,5,6,0,0.0
+DOIS IRMAOS,5,6,0,0.0
+DOIS UNIDOS,4,5,0,0.0
+ENCRUZILHADA,8,9,0,0.0
+ENGENHO DO MEIO,5,6,0,0.0
+ESPINHEIRO,6,7,0,0.0
+ESTANCIA,3,4,0,0.0
+FUNDAO,4,5,0,0.0
+GRACAS,10,11,0,0.0
+GUABIRABA,5,6,0,0.0
+HIPODROMO,3,4,0,0.0
+IBURA,8,9,0,0.0
+ILHA DO LEITE,4,5,0,0.0
+ILHA DO RETIRO,6,7,0,0.0
+ILHA JOANA BEZERRA,6,7,0,0.0
+IMBIRIBEIRA,4,5,0,0.0
+IPSEP,4,5,0,0.0
+IPUTINGA,7,8,0,0.0
+JAQUEIRA,5,6,0,0.0
+JARDIM SAO PAULO,5,6,0,0.0
+JIQUIA,5,6,0,0.0
+JORDAO,3,4,0,0.0
+LINHA DO TIRO,6,7,0,0.0
+MACAXEIRA,4,5,0,0.0
+MADALENA,7,8,0,0.0
+MANGABEIRA,5,6,0,0.0
+MANGUEIRA,4,5,0,0.0
+MONTEIRO,5,6,0,0.0
+MORRO DA CONCEICAO,5,6,0,0.0
+MUSTARDINHA,4,5,0,0.0
+NOVA DESCOBERTA,7,8,0,0.0
+PAISSANDU,6,7,0,0.0
+PARNAMIRIM,5,6,0,0.0
+PASSARINHO,4,5,0,0.0
+PAU FERRO,1,2,0,0.0
+PEIXINHOS,3,4,0,0.0
+PINA,3,4,0,0.0
+POCO,4,5,0,0.0
+PONTO DE PARADA,6,7,0,0.0
+PORTO DA MADEIRA,4,5,0,0.0
+PRADO,7,8,0,0.0
+RECIFE,3,4,0,0.0
+ROSARINHO,5,6,0,0.0
+SAN MARTIN,10,11,0,0.0
+SANCHO,4,5,0,0.0
+SANTANA,6,7,0,0.0
+SANTO AMARO,7,8,0,0.0
+SANTO ANTONIO,5,6,0,0.0
+SAO JOSE,6,7,0,0.0
+SITIO DOS PINTOS - SAO BRAS,2,3,0,0.0
+SOLEDADE,2,3,0,0.0
+TAMARINEIRA,9,10,0,0.0
+TEJIPIO,4,5,0,0.0
+TORRE,6,7,0,0.0
+TORREAO,4,5,0,0.0
+TORROES,4,5,0,0.0
+TOTO,3,4,0,0.0
+VARZEA,4,5,0,0.0
+VASCO DA GAMA,5,6,0,0.0
+ZUMBI,4,5,0,0.0

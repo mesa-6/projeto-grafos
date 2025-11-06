@@ -1,132 +1,496 @@
-from pathlib import Path
-import pandas as pd
+# src/solve.py
+"""
+Script orquestrador que consome a API local (FastAPI) e também usa o Graph local
+para gerar todos os entregáveis necessários.
+
+Use:
+  1) rode a API (python -m src.cli ou uvicorn src.web.api:app --reload)
+  2) rode este script: python -m src.solve
+"""
+
+import os
+import sys
 import json
+import csv
+import time
+from pathlib import Path
+from tempfile import NamedTemporaryFile
 
-data_path = Path(__file__).resolve().parent.parent / 'data'
-out_path = Path(__file__).resolve().parent.parent / 'out'
+import requests
 
-adjacencias_file = data_path / 'adjacencias_bairros.csv'
-microrregiao_file = data_path / 'bairros_unique.csv'
+OUT_DIR = Path(__file__).resolve().parent.parent / "out"
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-df_adjacencias = pd.read_csv(adjacencias_file)
-df_microrregiao = pd.read_csv(microrregiao_file)
+API_BASE = os.environ.get("GRAFOS_API_URL", "http://127.0.0.1:3000")
 
-# Aplicar padronização nos nomes dos bairros (remover acentos e colocar em maiúsculas)
-def padronizar_nome_bairro(nome: str) -> str:
-    traducoes = str.maketrans(
-        'áàãâäéèêëíìîïóòõôöúùûüçÁÀÃÂÄÉÈÊËÍÌÎÏÓÒÕÔÖÚÙÛÜÇ',
-        'aaaaaeeeeiiiiooooouuuucAAAAAEEEEIIIIOOOOOUUUUC'
+# --- helpers to call the API (existing behavior) ---
+def fetch_nodes():
+    r = requests.get(f"{API_BASE}/nodes")
+    r.raise_for_status()
+    return r.json()
+
+def fetch_edges():
+    r = requests.get(f"{API_BASE}/edges")
+    r.raise_for_status()
+    return r.json()
+
+def fetch_microrregiao(mr_id):
+    r = requests.get(f"{API_BASE}/microrregiao/{mr_id}")
+    if r.status_code == 404:
+        return None
+    r.raise_for_status()
+    return r.json()
+
+def fetch_ego(node):
+    r = requests.get(f"{API_BASE}/ego/{node}")
+    if r.status_code == 404:
+        return None
+    r.raise_for_status()
+    return r.json()
+
+def trigger_static_html_generation():
+    r = requests.post(f"{API_BASE}/export/static-html")
+    r.raise_for_status()
+    resp = r.json()
+    generated = resp.get("generated", [])
+    print(f"[solve] HTMLs gerados via API: {generated}")
+    return generated
+
+# --- local Graph-based helpers (use local files / Graph implementation) ---
+from src.graphs.graph import Graph
+from src.graphs.exporters import export_route_tree_html
+from pyvis.network import Network
+
+def build_local_graph():
+    """Carrega Graph localmente a partir dos CSVs existentes em data/"""
+    adj_path = DATA_DIR / "adjacencias_bairros.csv"
+    mr_path = DATA_DIR / "bairros_unique.csv"
+    if not adj_path.exists():
+        raise FileNotFoundError(f"Arquivo de adjacências não encontrado: {adj_path}")
+    # bairros_unique pode não existir, mas você disse que existe
+    if not mr_path.exists():
+        print(f"[solve] AVISO: {mr_path} não existe; o mapeamento microrregiao ficará vazio.")
+        return Graph.load_from_files(adj_path, None)
+    return Graph.load_from_files(adj_path, mr_path)
+
+# ------------- NEW: gerar distancias_enderecos.csv -------------
+def generate_distancias_enderecos(graph: Graph):
+    """Lê data/enderecos.csv e calcula Dijkstra para cada par; salva out/distancias_enderecos.csv"""
+    enderecos_file = DATA_DIR / "enderecos.csv"
+    out_file = OUT_DIR / "distancias_enderecos.csv"
+
+    if not enderecos_file.exists():
+        print(f"[solve] Aviso: {enderecos_file} não existe. Pulando geração de distancias_enderecos.csv")
+        return
+
+    rows_out = []
+    import math
+
+    # lê CSV de pares, assume header bairro_origem,bairro_destino (sem peso)
+    with open(enderecos_file, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for r in reader:
+            origem = r.get("bairro_origem")
+            destino = r.get("bairro_destino")
+            if not origem or not destino:
+                continue
+            caminho, ruas, custo = graph.dijkstra(origem, destino)
+            custo_val = float(custo) if (isinstance(custo, (int,float)) and not (custo is None)) else float("inf")
+            caminho_str = " -> ".join(caminho) if caminho else ""
+            rows_out.append({
+                "bairro_origem": origem,
+                "bairro_destino": destino,
+                "custo": round(custo_val, 4) if custo_val != float("inf") else "",
+                "caminho": caminho_str
+            })
+
+    # salvar CSV
+    keys = ["bairro_origem", "bairro_destino", "custo", "caminho"]
+    with open(out_file, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=keys)
+        writer.writeheader()
+        for r in rows_out:
+            writer.writerow(r)
+    print(f"[solve] distancias_enderecos.csv gerado: {out_file}")
+
+# ------------- NEW: percurso_nova_descoberta_setubal.json + arvore HTML -------------
+def generate_percurso_nova_descoberta(graph: Graph):
+    """Calcula dijkstra para Nova Descoberta -> Boa Viagem, salva JSON e gera árvore HTML."""
+    origem = "Nova Descoberta"
+    destino = "Boa Viagem"
+    caminho, ruas, custo = graph.dijkstra(origem, destino)
+
+    # json output
+    out_json = OUT_DIR / "percurso_nova_descoberta_setubal.json"
+    data = {
+        "bairro_origem": origem,
+        "bairro_destino": destino,
+        "custo": round(float(custo), 4) if custo != float("inf") else None,
+        "caminho": caminho,
+        "ruas": ruas
+    }
+    with open(out_json, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+    print(f"[solve] percurso JSON gerado: {out_json}")
+
+    # gerar arvore HTML (usando exporter)
+    out_html = OUT_DIR / "arvore_percurso.html"
+    try:
+        export_route_tree_html(caminho, ruas, out_html)
+        print(f"[solve] arvore_percurso.html gerado: {out_html}")
+    except Exception as e:
+        print(f"[solve] ERRO ao gerar arvore_percurso.html: {e}")
+
+# ------------- NEW: top bairros file (maior grau / maior densidade_ego) -------------
+def generate_top_bairros_summary(graph: Graph):
+    """Calcula e salva o bairro com maior grau e maior densidade_ego (JSON)."""
+    # graus via nodes_metadata
+    nodes_meta = graph.nodes_metadata()
+    if not nodes_meta:
+        print("[solve] AVISO: graph.nodes_metadata() vazio. Pulando top summary.")
+        return
+
+    # maior grau
+    maior_grau = max(nodes_meta, key=lambda x: x.get("grau", 0))
+
+    # densidade via ego_metrics para cada nó
+    melhor_dens = None
+    for n in graph.nodes_list():
+        m = graph.ego_metrics(n)
+        if melhor_dens is None or m["densidade_ego"] > melhor_dens["densidade_ego"]:
+            melhor_dens = m
+
+    out = {
+        "maior_grau": maior_grau,
+        "maior_densidade_ego": melhor_dens
+    }
+    out_file = OUT_DIR / "top_bairros_summary.json"
+    with open(out_file, "w", encoding="utf-8") as f:
+        json.dump(out, f, ensure_ascii=False, indent=4)
+    print(f"[solve] top_bairros_summary.json gerado: {out_file}")
+
+# ------------- NEW: densidade_conexao_bairros.html (nós dimensionados pela densidade) -------------
+def generate_densidade_conexao_html(graph: Graph):
+    """
+    Gera HTML estático onde o tamanho do nó é proporcional à densidade_ego,
+    mas com escala controlada para evitar nós sobrepostos/oversized.
+    Salva em out/densidade_conexao_bairros.html
+    """
+    out_html = OUT_DIR / "densidade_conexoes_bairros.html"
+
+    # calcular densidades por nó
+    dens_map = {}
+    for n in graph.nodes_list():
+        m = graph.ego_metrics(n)
+        dens_map[n] = float(m["densidade_ego"])
+
+    dens_values = list(dens_map.values()) if dens_map else [0.0]
+    min_dens = min(dens_values)
+    max_dens = max(dens_values)
+
+    # parâmetros de visual (ajustáveis)
+    min_size = 8    # menor tamanho de nó
+    max_size = 36   # maior tamanho de nó
+    if max_size < min_size:
+        max_size = min_size + 10
+
+    # preparar pyvis
+    net = Network(height="900px", width="100%", bgcolor="#222222", font_color="white")
+    net.set_options("""
+    var options = {
+      "physics": {
+        "enabled": true,
+        "barnesHut": {
+          "gravitationalConstant": -3000,
+          "centralGravity": 0.2,
+          "springLength": 200,
+          "springConstant": 0.04,
+          "avoidOverlap": 1
+        },
+        "stabilization": {"iterations": 250, "updateInterval": 50}
+      },
+      "nodes": {
+        "font": {"size": 12, "face":"Arial"},
+        "shape": "dot",
+        "scaling": {"min": %d, "max": %d}
+      },
+      "edges": {
+        "smooth": {"enabled": true}
+      }
+    }
+    """ % (min_size, max_size)
     )
-    nome_padronizado = nome.translate(traducoes).strip()
-    return nome_padronizado
 
-df_adjacencias['bairro_origem'] = df_adjacencias['bairro_origem'].apply(padronizar_nome_bairro)
-df_adjacencias['bairro_destino'] = df_adjacencias['bairro_destino'].apply(padronizar_nome_bairro)
+    # escalar densidade -> tamanho (normalização linear, com cuidado se min==max)
+    def dens_to_size(d):
+        try:
+            d = float(d)
+        except Exception:
+            d = 0.0
+        if max_dens == min_dens:
+            # todos iguais -> atribui tamanho médio
+            return int((min_size + max_size) / 2)
+        frac = (d - min_dens) / (max_dens - min_dens)
+        size = min_size + frac * (max_size - min_size)
+        # clamp
+        if size < min_size:
+            size = min_size
+        if size > max_size:
+            size = max_size
+        return int(size)
 
-def densidade_cidade(df_adjacencias: pd.DataFrame, df_microrregiao: pd.DataFrame) -> float:
-    E = len(df_adjacencias)
-    N = len(df_microrregiao)
-    D = (2 * E) / (N * (N - 1))
+    # calcular max peso para escalar largura de arestas
+    all_edges = graph.edges_list()
+    peso_vals = [float(e.get("peso", 1.0) or 0.0) for e in all_edges] if all_edges else [1.0]
+    max_peso = max(peso_vals) if peso_vals else 1.0
+    if max_peso <= 0:
+        max_peso = 1.0
 
-    return D
+    # adicionar nós
+    for n, dens in dens_map.items():
+        size = dens_to_size(dens)
+        net.add_node(n, label=n, title=f"{n} - densidade: {dens:.4f}", size=size, color="lightgreen")
 
-cidade_densidade = densidade_cidade(df_adjacencias, df_microrregiao)
-cidade_densidade = round(cidade_densidade, 4)
+    # adicionar arestas com largura moderada (1..4)
+    for e in all_edges:
+        origem = e["bairro_origem"]
+        destino = e["bairro_destino"]
+        log = e.get("logradouro", "")
+        peso = float(e.get("peso", 1.0) or 0.0)
+        # largura proporcional (1..4)
+        width = 1 + (peso / max_peso) * 3.0
+        if width < 1:
+            width = 1
+        if width > 5:
+            width = 5
+        net.add_edge(origem, destino, title=f"Rua: {log}\\nPeso: {peso}", value=max(1.0, float(peso)), width=width)
 
-output_data = {
-    "ordem": len(df_microrregiao),
-    "tamanho": len(df_adjacencias),
-    "densidade": cidade_densidade
-}
+    # salvar
+    net.write_html(str(out_html))
+    print(f"[solve] densidade_conexao_bairros.html gerado: {out_html} (nodes sizes in [{min_size},{max_size}])")
 
-with open(out_path / 'recife_global.json', 'w') as f:
-    json.dump(output_data, f, indent=4)
+# ------------- NEW: interactive_bairro_vizinhos.html -------------
+def generate_interactive_bairro_vizinhos_html(graph: Graph):
+    """
+    Gera um HTML interativo que destaca o nó selecionado e seus vizinhos, dessatura os outros.
+    Salva em out/interactive_bairro_vizinhos.html
+    """
+    out_html = OUT_DIR / "interactive_bairro_vizinhos.html"
 
-# Função para calcular a densidade por microrregião
-def densidade_microrregiao(df_adjacencias: pd.DataFrame, df_microrregiao: pd.DataFrame) -> list:
-    densidades = []
+    net = Network(height="900px", width="100%", bgcolor="#222222", font_color="white")
+    net.set_options("""
+    var options = {
+      "layout": {"improvedLayout": true},
+      "physics": {"enabled": true, "stabilization": {"iterations": 200}},
+      "nodes": {"font": {"size": 14}, "shape": "dot"},
+      "edges": {"smooth": {"enabled": true}}
+    }
+    """)
 
-    for mr in df_microrregiao['microrregiao'].unique():
-        bairros_na_microrregiao = df_microrregiao[df_microrregiao['microrregiao'] == mr]['bairro']
+    # adicionar nós e arestas
+    for n in graph.nodes_list():
+        net.add_node(n, label=n, title=n, color="orange", size=18)
 
-        N = len(bairros_na_microrregiao)
+    for e in graph.edges_list():
+        net.add_edge(e["bairro_origem"], e["bairro_destino"], title=f"Peso: {e['peso']}\\nRua: {e['logradouro']}", color="lightblue", width=1)
 
-        subgraph = df_adjacencias[
-            (df_adjacencias['bairro_origem'].isin(bairros_na_microrregiao)) &
-            (df_adjacencias['bairro_destino'].isin(bairros_na_microrregiao))
-        ]
+    # gerar HTML temporário e injetar script de destaque
+    tmp = NamedTemporaryFile(delete=False, suffix=".html")
+    net.write_html(tmp.name)
 
-        E = len(subgraph)
-        D = (2 * E) / (N * (N - 1)) if N > 1 else 0
+    highlight_script = r"""
+<script type="text/javascript">
+(function waitForNetwork(){
+    if(typeof network === "undefined"){
+        setTimeout(waitForNetwork, 50);
+        return;
+    }
 
-        microrregiao_data = {
-            "microrregiao": int(mr),
-            "ordem": N,
-            "tamanho": E,
-            "densidade": round(D, 4)
+    function resetStyles(){
+        var allNodes = network.body.data.nodes.get();
+        var allEdges = network.body.data.edges.get();
+        var nUpdate = allNodes.map(function(n){ return {id:n.id, color:{background:'orange'}, size:18}; });
+        var eUpdate = allEdges.map(function(e){ return {id:e.id, color:{color:'lightblue'}, width:1}; });
+        network.body.data.nodes.update(nUpdate);
+        network.body.data.edges.update(eUpdate);
+    }
+
+    network.on("click", function(params){
+        if(!params.nodes || params.nodes.length === 0){
+            resetStyles();
+            return;
         }
+        var nodeId = params.nodes[0];
+        var neighbors = network.getConnectedNodes(nodeId);
+        var allNodes = network.body.data.nodes.get();
+        var allEdges = network.body.data.edges.get();
 
-        densidades.append(microrregiao_data)
+        var nUpdate = [];
+        allNodes.forEach(function(n){
+            if(n.id === nodeId){
+                nUpdate.push({id:n.id, color:{background:'#ff6666'}, size:36});
+            } else if(neighbors.indexOf(n.id) !== -1){
+                nUpdate.push({id:n.id, color:{background:'#00ff66'}, size:28});
+            } else {
+                nUpdate.push({id:n.id, color:{background:'#777777'}, size:12});
+            }
+        });
 
-    return densidades
+        var eUpdate = [];
+        allEdges.forEach(function(e){
+            if(e.from === nodeId || e.to === nodeId || (neighbors.indexOf(e.from)!==-1 && neighbors.indexOf(e.to)!==-1)){
+                eUpdate.push({id:e.id, color:{color:'#ff4444'}, width:4});
+            } else {
+                eUpdate.push({id:e.id, color:{color:'#cccccc'}, width:1});
+            }
+        });
 
+        network.body.data.nodes.update(nUpdate);
+        network.body.data.edges.update(eUpdate);
+    });
 
-# Exportar dados para um arquivo microrregioes.json
-densidades_microrregiao = densidade_microrregiao(df_adjacencias, df_microrregiao)
+    network.on("doubleClick", function(){ resetStyles(); });
+    document.addEventListener('keydown', function(evt){
+        if(evt.key === "Escape") resetStyles();
+    });
 
-with open(out_path / 'microrregioes.json', 'w') as f:
-    json.dump(densidades_microrregiao, f, indent=4)
+})();
+</script>
+"""
 
-def ego_subrede_bairros(df_adjacencias: pd.DataFrame) -> list:
-    ego_data = []
+    # ler tmp e injetar o script antes do </body>
+    with open(tmp.name, "r", encoding="utf-8") as f:
+        html = f.read()
 
-    bairros = pd.unique(df_adjacencias[['bairro_origem', 'bairro_destino']].values.ravel('K'))
+    if "</body>" in html:
+        html = html.replace("</body>", highlight_script + "\n</body>")
+    else:
+        html = html + highlight_script
 
-    for bairro in bairros:
+    with open(out_html, "w", encoding="utf-8") as f:
+        f.write(html)
 
-        vizinhos_origem = df_adjacencias[df_adjacencias['bairro_origem'] == bairro]['bairro_destino'].tolist()
-        vizinhos_destino = df_adjacencias[df_adjacencias['bairro_destino'] == bairro]['bairro_origem'].tolist()
+    print(f"[solve] interactive_bairro_vizinhos.html gerado: {out_html}")
 
-        # Transformar em uma lista única de vizinhos
-        vizinhos = list(set(vizinhos_origem + vizinhos_destino))
+# --- existing generation functions (global / microrregioes / ego csvs) ---
+def generate_global_summary():
+    nodes_resp = fetch_nodes()
+    edges_resp = fetch_edges()
 
-        vizinhos.append(bairro) 
+    N = nodes_resp["count"]
+    E = edges_resp["count"]
+    dens = 0.0
+    if N > 1:
+        dens = (2.0 * E) / (N * (N - 1))
+    dens = round(dens, 4)
 
-        N = len(vizinhos)
+    payload = {"ordem": N, "tamanho": E, "densidade": dens}
 
-        subgraph = df_adjacencias[
-            (df_adjacencias['bairro_origem'].isin(vizinhos)) &
-            (df_adjacencias['bairro_destino'].isin(vizinhos))
-        ]
+    out_file = OUT_DIR / "recife_global.json"
+    with open(out_file, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=4, ensure_ascii=False)
+    print(f"[solve] recife_global.json gerado: {out_file}")
+    return payload
 
-        E = len(subgraph)
-        D = (2 * E) / (N * (N - 1)) if N > 1 else 0
+def generate_microrregioes():
+    nodes_resp = fetch_nodes()
+    nodes = nodes_resp["nodes"]
 
-        grau = len(vizinhos) - 1
+    mrs = sorted({str(n.get("microrregiao")) for n in nodes if n.get("microrregiao") not in (None, "", float("nan"))})
 
-        bairro_data = {
-            "bairro": bairro,
-            "grau": grau,
-            "ordem_ego": N,
-            "tamanho_ego": E,
-            "densidade_ego": round(D, 4)
-        }
+    out_list = []
+    for mr in mrs:
+        try:
+            stats = fetch_microrregiao(int(mr))
+        except Exception:
+            stats = None
+        if stats:
+            out_list.append(stats)
+        else:
+            print(f"[solve] Aviso: microrregiao {mr} retornou None/404")
 
-        ego_data.append(bairro_data)
+    out_file = OUT_DIR / "microrregioes.json"
+    with open(out_file, "w", encoding="utf-8") as f:
+        json.dump(out_list, f, indent=4, ensure_ascii=False)
+    print(f"[solve] microrregioes.json gerado: {out_file}")
+    return out_list
 
-    return ego_data
+def generate_ego_csvs():
+    nodes_resp = fetch_nodes()
+    nodes = nodes_resp["nodes"]
 
-# Exportar dados para um arquivo ego_bairro.csv
-ego_bairros = ego_subrede_bairros(df_adjacencias)
-ego_bairros_df = pd.DataFrame(ego_bairros)
-ego_bairros_df.to_csv(out_path / 'ego_bairro.csv', index=False)
+    out_rows = []
+    for n in nodes:
+        bairro = n["id"]
+        metrics = fetch_ego(bairro)
+        if metrics is None:
+            continue
+        out_rows.append(metrics)
 
-# Arquivo graus.csv
-graus_df = ego_bairros_df[['bairro', 'grau']]
-graus_df.to_csv(out_path / 'graus.csv', index=False)
+    ego_file = OUT_DIR / "ego_bairro.csv"
+    keys = ["bairro", "grau", "ordem_ego", "tamanho_ego", "densidade_ego"]
+    with open(ego_file, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=keys)
+        writer.writeheader()
+        for row in out_rows:
+            writer.writerow({k: row.get(k, "") for k in keys})
+    print(f"[solve] ego_bairro.csv gerado: {ego_file}")
 
-ego_bairros_df.sort_values(by='densidade_ego', ascending=False, inplace=True)
-print(f'O bairro mais denso é {ego_bairros_df.iloc[0]["bairro"]} com densidade {ego_bairros_df.iloc[0]["densidade_ego"]}')
+    graus_file = OUT_DIR / "graus.csv"
+    with open(graus_file, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["bairro", "grau"])
+        writer.writeheader()
+        for row in out_rows:
+            writer.writerow({"bairro": row.get("bairro"), "grau": row.get("grau")})
+    print(f"[solve] graus.csv gerado: {graus_file}")
+    return out_rows
 
-ego_bairros_df.sort_values(by='grau', ascending=False, inplace=True)
-print(f'O bairro com maior grau é {ego_bairros_df.iloc[0]["bairro"]} com grau {ego_bairros_df.iloc[0]["grau"]}')
+# ---------------- main orchestration ----------------
+def main():
+    print("[solve] esperando a API estar disponível...", end="", flush=True)
+    for i in range(10):
+        try:
+            r = requests.get(f"{API_BASE}/health", timeout=2.0)
+            if r.status_code == 200:
+                print(" OK")
+                break
+        except Exception:
+            print(".", end="", flush=True)
+            time.sleep(0.7)
+    else:
+        print("\n[solve] erro: não consegui conectar na API. Rode `python -m src.cli` em outro terminal e tente de novo.")
+        sys.exit(1)
+
+    # 1) entregáveis já existentes
+    generate_global_summary()
+    generate_microrregioes()
+    generate_ego_csvs()
+    trigger_static_html_generation()
+
+    # 2) agora, usar graph local para cálculos adicionais (dijkstra, percursos, htmls)
+    try:
+        graph = build_local_graph()
+    except Exception as e:
+        print(f"[solve] ERRO: nao consegui construir grafo local: {e}")
+        return
+
+    # 3) distâncias entre pares do arquivo enderecos.csv
+    generate_distancias_enderecos(graph)
+
+    # 4) percurso específico (Nova Descoberta -> Boa Viagem) JSON + árvore HTML
+    generate_percurso_nova_descoberta(graph)
+
+    # 5) top bairros summary (maior grau / maior densidade)
+    generate_top_bairros_summary(graph)
+
+    # 6) densidade_conexao_bairros.html (nós dimensionados por densidade)
+    generate_densidade_conexao_html(graph)
+
+    # 7) interactive_bairro_vizinhos.html
+    generate_interactive_bairro_vizinhos_html(graph)
+
+    print("[solve] todos os entregáveis gerados (ver pasta out/)")
+
+if __name__ == "__main__":
+    main()

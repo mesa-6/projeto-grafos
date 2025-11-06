@@ -3,16 +3,16 @@
     "bairro_destino": "Boa Viagem",
     "custo": 8.6,
     "caminho": [
-        "Nova Descoberta",
-        "Casa Amarela",
-        "Tamarineira",
-        "Gracas",
-        "Boa Vista",
-        "Santo Antonio",
-        "Sao Jose",
-        "Cabanga",
-        "Pina",
-        "Boa Viagem"
+        "NOVA DESCOBERTA",
+        "CASA AMARELA",
+        "TAMARINEIRA",
+        "GRACAS",
+        "BOA VISTA",
+        "SANTO ANTONIO",
+        "SAO JOSE",
+        "CABANGA",
+        "PINA",
+        "BOA VIAGEM"
     ],
     "ruas": [
         "Avenida Norte Miguel Arraes de Alencar",

@@ -77,6 +77,7 @@ def export_per_microrregiao_htmls(graph) -> List[str]:
 
     
     return generated
+
 # Gera um HTML simples que desenha a 'árvore/linha' do percurso Nova Descoberta -> Boa Viagem
 def export_route_tree_html(caminho: List[str], logradouros: List[str], out_file: Path) -> str:
     net = _basic_pyvis_network(title="Percurso")
@@ -95,6 +96,7 @@ def export_route_tree_html(caminho: List[str], logradouros: List[str], out_file:
     net.write_html(out_file)
 
     return out_file
+
 # Função usada pela api para gerar os entregáveis
 def export_all_pyvis_htmls(graph) -> List[str]:
     generated = []

@@ -1,6 +1,6 @@
 {
-    "bairro_origem": "Nova Descoberta",
-    "bairro_destino": "Boa Viagem",
+    "bairro_origem": "NOVA DESCOBERTA",
+    "bairro_destino": "BOA VIAGEM",
     "custo": 8.6,
     "caminho": [
         "NOVA DESCOBERTA",

@@ -124,30 +124,7 @@ def api_export_static_html(graph = Depends(get_graph)):
 def api_generate_all(graph: str = Query("part1")):
     summary = {"steps": [], "errors": []}
 
-    try:
-        summary["steps"].append("generate_global_summary")
-        generate_global_summary()
-    except Exception as e:
-        summary["errors"].append({"step": "generate_global_summary", "error": str(e)})
-
-    try:
-        summary["steps"].append("generate_microrregioes")
-        generate_microrregioes()
-    except Exception as e:
-        summary["errors"].append({"step": "generate_microrregioes", "error": str(e)})
-
-    try:
-        summary["steps"].append("generate_ego_csvs")
-        generate_ego_csvs()
-    except Exception as e:
-        summary["errors"].append({"step": "generate_ego_csvs", "error": str(e)})
-
-    try:
-        summary["steps"].append("trigger_static_html_generation")
-        trigger_static_html_generation()
-    except Exception as e:
-        summary["errors"].append({"step": "trigger_static_html_generation", "error": str(e)})
-
+    # Constrói o grafo local de bairros
     try:
         summary["steps"].append("build_local_graph")
         graph_local = build_local_graph()
@@ -155,35 +132,68 @@ def api_generate_all(graph: str = Query("part1")):
         summary["errors"].append({"step": "build_local_graph", "error": str(e)})
         return {"summary": summary}
 
+    # Gera o recife_global.json
     try:
-        summary["steps"].append("generate_distancias_enderecos")
-        generate_distancias_enderecos(graph_local)
+        summary["steps"].append("generate_global_summary")
+        generate_global_summary()
     except Exception as e:
-        summary["errors"].append({"step": "generate_distancias_enderecos", "error": str(e)})
+        summary["errors"].append({"step": "generate_global_summary", "error": str(e)})
 
+    # Gera o microrregioes.json
     try:
-        summary["steps"].append("generate_percurso_nova_descoberta")
-        generate_percurso_nova_descoberta(graph_local)
+        summary["steps"].append("generate_microrregioes")
+        generate_microrregioes()
     except Exception as e:
-        summary["errors"].append({"step": "generate_percurso_nova_descoberta", "error": str(e)})
+        summary["errors"].append({"step": "generate_microrregioes", "error": str(e)})
 
+    # Gera o ego_bairro.csv
+    try:
+        summary["steps"].append("generate_ego_csvs")
+        generate_ego_csvs()
+    except Exception as e:
+        summary["errors"].append({"step": "generate_ego_csvs", "error": str(e)})
+
+    # Gera o top_bairros_summary.json
     try:
         summary["steps"].append("generate_top_bairros_summary")
         generate_top_bairros_summary(graph_local)
     except Exception as e:
         summary["errors"].append({"step": "generate_top_bairros_summary", "error": str(e)})
 
+    # Gera o distancias_enderecos.csv
+    try:
+        summary["steps"].append("generate_distancias_enderecos")
+        generate_distancias_enderecos(graph_local)
+    except Exception as e:
+        summary["errors"].append({"step": "generate_distancias_enderecos", "error": str(e)})
+
+    # Gera o percurso_nova_descoberta_setubal.json e o arvore_percurso.html
+    try:
+        summary["steps"].append("generate_percurso_nova_descoberta")
+        generate_percurso_nova_descoberta(graph_local)
+    except Exception as e:
+        summary["errors"].append({"step": "generate_percurso_nova_descoberta", "error": str(e)})    
+
+    # Gera o densidade_conexoes_bairros.html
     try:
         summary["steps"].append("generate_densidade_conexao_html")
         generate_densidade_conexao_html(graph_local)
     except Exception as e:
         summary["errors"].append({"step": "generate_densidade_conexao_html", "error": str(e)})
 
+    # Gera o interactive_bairro_vizinhos.html
     try:
         summary["steps"].append("generate_interactive_bairro_vizinhos_html")
         generate_interactive_bairro_vizinhos_html(graph_local)
     except Exception as e:
         summary["errors"].append({"step": "generate_interactive_bairro_vizinhos_html", "error": str(e)})
+
+    # Gera os HTMLs das microrregiões e o grafo_completo.html
+    try:
+        summary["steps"].append("trigger_static_html_generation")
+        trigger_static_html_generation()
+    except Exception as e:
+        summary["errors"].append({"step": "trigger_static_html_generation", "error": str(e)})
 
     return {"summary": summary}
 

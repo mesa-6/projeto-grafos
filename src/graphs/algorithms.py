@@ -122,6 +122,7 @@ def dijkstra(graph, source: str, dest: Optional[str] = None) -> Dict[str, Any]:
 
         if d > dist[u]:
             continue
+
         if dest is not None and u == dest:
             break
         

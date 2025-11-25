@@ -125,9 +125,19 @@ def generate_distancias_enderecos(graph: Graph):
     print(f"[solve] distancias_enderecos.csv gerado: {out_file}")
 
 def generate_percurso_nova_descoberta(graph: Graph):
-    origem = "Nova Descoberta"
-    destino = "Boa Viagem"
-    caminho, ruas, custo = graph.dijkstra(origem, destino)
+    origem = "NOVA DESCOBERTA"
+    destino = "BOA VIAGEM"
+    
+    res = algorithms.dijkstra(graph, origem, destino)
+
+    prev = res.get("prev", {})
+    prev_edge = res.get("prev_edge", {})
+    dist = res.get("dist", {})
+    path_nodes = algorithms.reconstruct_path(prev, destino)
+    path_ruas = algorithms.reconstruct_path_edges(prev, prev_edge, destino)
+    custo = dist.get(destino, float("inf"))
+
+    custo, caminho, ruas = custo, path_nodes, path_ruas
 
     out_json = OUT_DIR / "percurso_nova_descoberta_setubal.json"
     data = {

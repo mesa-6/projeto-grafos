@@ -74,8 +74,7 @@ def export_per_microrregiao_htmls(graph) -> List[str]:
 
         net.write_html(str(fname))
         generated.append(str(fname))
-
-    
+   
     return generated
 
 # Gera um HTML simples que desenha a 'árvore/linha' do percurso Nova Descoberta -> Boa Viagem

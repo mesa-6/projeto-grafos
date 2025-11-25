@@ -5,10 +5,10 @@
         "microrregiao": 3
     },
     "maior_densidade_ego": {
-        "bairro": "AFLITOS",
-        "grau": 4,
-        "ordem_ego": 5,
-        "tamanho_ego": 0,
-        "densidade_ego": 0.0
+        "bairro": "BRASILIA TEIMOSA",
+        "grau": 1,
+        "ordem_ego": 2,
+        "tamanho_ego": 1,
+        "densidade_ego": 1.0
     }
 }

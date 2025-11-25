@@ -1,0 +1,238 @@
+{
+  "meta": {
+    "n_nodes": 94,
+    "seed": 12345
+  },
+  "runs": {
+    "bfs": [
+      {
+        "source": "JARDIM SAO PAULO",
+        "time_sec": 0.00021219253540039062,
+        "n_reached": 94
+      },
+      {
+        "source": "ZUMBI",
+        "time_sec": 0.00018739700317382812,
+        "n_reached": 94
+      },
+      {
+        "source": "AFOGADOS",
+        "time_sec": 0.0001780986785888672,
+        "n_reached": 94
+      },
+      {
+        "source": "ENGENHO DO MEIO",
+        "time_sec": 0.0001773834228515625,
+        "n_reached": 94
+      },
+      {
+        "source": "ILHA DO RETIRO",
+        "time_sec": 0.00017642974853515625,
+        "n_reached": 94
+      },
+      {
+        "source": "CASA AMARELA",
+        "time_sec": 0.00017571449279785156,
+        "n_reached": 94
+      },
+      {
+        "source": "DERBY",
+        "time_sec": 0.00020051002502441406,
+        "n_reached": 94
+      },
+      {
+        "source": "PONTO DE PARADA",
+        "time_sec": 0.00017762184143066406,
+        "n_reached": 94
+      },
+      {
+        "source": "JORDAO",
+        "time_sec": 0.0001761913299560547,
+        "n_reached": 94
+      },
+      {
+        "source": "CACOTE",
+        "time_sec": 0.00017523765563964844,
+        "n_reached": 94
+      }
+    ],
+    "dfs": [
+      {
+        "source": "ILHA DO RETIRO",
+        "time_sec": 0.00048089027404785156,
+        "n_ordered": 94
+      },
+      {
+        "source": "BONGI",
+        "time_sec": 0.0003058910369873047,
+        "n_ordered": 94
+      },
+      {
+        "source": "JORDAO",
+        "time_sec": 0.0002853870391845703,
+        "n_ordered": 94
+      },
+      {
+        "source": "CURADO",
+        "time_sec": 0.000308990478515625,
+        "n_ordered": 94
+      },
+      {
+        "source": "POCO",
+        "time_sec": 0.0003845691680908203,
+        "n_ordered": 94
+      },
+      {
+        "source": "SANTO AMARO",
+        "time_sec": 0.0002713203430175781,
+        "n_ordered": 94
+      },
+      {
+        "source": "CAMPINA DO BARRETO",
+        "time_sec": 0.00027251243591308594,
+        "n_ordered": 94
+      },
+      {
+        "source": "SANCHO",
+        "time_sec": 0.0002722740173339844,
+        "n_ordered": 94
+      },
+      {
+        "source": "PINA",
+        "time_sec": 0.000293731689453125,
+        "n_ordered": 94
+      },
+      {
+        "source": "CAMPO GRANDE",
+        "time_sec": 0.0002925395965576172,
+        "n_ordered": 94
+      }
+    ],
+    "dijkstra": [
+      {
+        "orig": "IBURA",
+        "dest": "ZUMBI",
+        "time_sec": 0.00027489662170410156,
+        "dist": 5.3
+      },
+      {
+        "orig": "BEBERIBE",
+        "dest": "PASSARINHO",
+        "time_sec": 0.0002455711364746094,
+        "dist": 4.05
+      },
+      {
+        "orig": "JAQUEIRA",
+        "dest": "PRADO",
+        "time_sec": 0.00024127960205078125,
+        "dist": 3.4
+      },
+      {
+        "orig": "NOVA DESCOBERTA",
+        "dest": "CAJUEIRO",
+        "time_sec": 0.00023746490478515625,
+        "dist": 6.6
+      },
+      {
+        "orig": "BREJO DE BEBERIBE",
+        "dest": "CAXANGA",
+        "time_sec": 0.0002334117889404297,
+        "dist": 5.35
+      },
+      {
+        "orig": "VASCO DA GAMA",
+        "dest": "ARRUDA",
+        "time_sec": 0.00023412704467773438,
+        "dist": 2.55
+      },
+      {
+        "orig": "CASA AMARELA",
+        "dest": "GUABIRABA",
+        "time_sec": 0.00023698806762695312,
+        "dist": 2.85
+      },
+      {
+        "orig": "FUNDAO",
+        "dest": "ALTO DO MANDU",
+        "time_sec": 0.00023436546325683594,
+        "dist": 6.0
+      },
+      {
+        "orig": "MADALENA",
+        "dest": "GUABIRABA",
+        "time_sec": 0.00024962425231933594,
+        "dist": 5.75
+      },
+      {
+        "orig": "ALTO DO MANDU",
+        "dest": "PAISSANDU",
+        "time_sec": 0.0002446174621582031,
+        "dist": 4.8999999999999995
+      }
+    ],
+    "bellman_ford": [
+      {
+        "orig": "TORREAO",
+        "dest": "JARDIM SAO PAULO",
+        "time_sec": 0.0009748935699462891,
+        "dist": 7.250000000000001,
+        "negative_cycle": false
+      },
+      {
+        "orig": "AFLITOS",
+        "dest": "SOLEDADE",
+        "time_sec": 0.0009851455688476562,
+        "dist": 2.5,
+        "negative_cycle": false
+      },
+      {
+        "orig": "CACOTE",
+        "dest": "PRADO",
+        "time_sec": 0.001233816146850586,
+        "dist": 4.75,
+        "negative_cycle": false
+      },
+      {
+        "orig": "CAMPINA DO BARRETO",
+        "dest": "DOIS UNIDOS",
+        "time_sec": 0.0013308525085449219,
+        "dist": 5.950000000000001,
+        "negative_cycle": false
+      },
+      {
+        "orig": "BOA VIAGEM",
+        "dest": "SITIO DOS PINTOS - SAO BRAS",
+        "time_sec": 0.000972747802734375,
+        "dist": 8.9,
+        "negative_cycle": false
+      }
+    ],
+    "floyd_warshall": [
+      {
+        "run": 1,
+        "n_nodes": 94,
+        "time_sec": 0.020889997482299805
+      },
+      {
+        "run": 2,
+        "n_nodes": 94,
+        "time_sec": 0.01831364631652832
+      },
+      {
+        "run": 3,
+        "n_nodes": 94,
+        "time_sec": 0.022309303283691406
+      },
+      {
+        "run": 4,
+        "n_nodes": 94,
+        "time_sec": 0.013819456100463867
+      },
+      {
+        "run": 5,
+        "n_nodes": 94,
+        "time_sec": 0.01189732551574707
+      }
+    ]
+  }
+}

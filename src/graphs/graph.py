@@ -2,7 +2,6 @@ from typing import Dict, List, Tuple, Optional, Any
 from pathlib import Path
 import pandas as pd
 import unicodedata
-import heapq
 
 # Definição dos tipos das variáveis
 Node = str
@@ -26,7 +25,7 @@ class Graph:
         if df_microrregiao is not None:
             g.set_microrregiao_from_df(df_microrregiao)
 
-        # conveniência: função local para normalizar nomes (chama o método da classe)
+        # Conveniência: função local para normalizar nomes (chama o método da classe)
         normalize = cls._normalize_name 
 
         for _, r in df_adjacencias.iterrows():
@@ -153,69 +152,17 @@ class Graph:
 
         return out
 
-    # Algoritmo de dijkstra
-    def dijkstra(self, origem: str, destino: str) -> Tuple[List[str], List[str], float]:
-        origem_n = self._normalize_name(origem)
-        destino_n = self._normalize_name(destino)
-
-        if origem_n not in self.nodes or destino_n not in self.nodes:
-            return [], [], float('inf')
-
-        INF = float('inf')
-
-        dist: Dict[Node, float] = {n: INF for n in self.nodes}
-        prev: Dict[Node, Optional[Node]] = {n: None for n in self.nodes}
-        prev_edge: Dict[Node, Optional[Logradouro]] = {n: None for n in self.nodes}
-
-        dist[origem_n] = 0.0
-        heap = [(0.0, origem_n)]
-
-        while heap:
-            d, u = heapq.heappop(heap)
-            
-            if d > dist[u]:
-                continue
-            
-            if u == destino_n:
-                break
-            
-            for v, w, log in self.adj.get(u, []):
-                nd = d + (float(w) if w is not None else INF)
-                
-                if nd < dist[v]:
-                    dist[v] = nd
-                    prev[v] = u
-                    prev_edge[v] = log
-                    heapq.heappush(heap, (nd, v))
-
-        if dist[destino_n] == INF:
-            return [], [], INF
-
-        path_nodes = []
-        path_logs = []
-        cur = destino_n
-        
-        while cur is not None and cur != origem_n:
-            path_nodes.append(cur)
-            path_logs.append(prev_edge[cur])
-            cur = prev[cur]
-        
-        path_nodes.append(origem_n)
-        path_nodes.reverse()
-        path_logs.reverse()
-
-        return path_nodes, [l if l is not None else "" for l in path_logs], float(dist[destino_n])
-
     # Calcula métricas para ego-network radius=1 do bairro:
     def ego_metrics(self, bairro: str) -> Dict[str, Any]:
         b = self._normalize_name(bairro)
-        
+    
         if b not in self.nodes:
             return {"bairro": bairro, "grau": 0, "ordem_ego": 0, "tamanho_ego": 0, "densidade_ego": 0.0}
 
         # vizinhos diretos
         vizs = {v for v, _, _ in self.adj.get(b, [])}
         vizs.add(b)
+
         N = len(vizs)
 
         m_count = 0
@@ -223,8 +170,8 @@ class Graph:
         
         for u in vizs:
             for v in self.adj.get(u, []):
-                if v in vizs:
-                    a, c = (u, v) if u <= v else (v, u)
+                if v[0] in vizs:
+                    a, c = (u, v[0]) if u <= v[0] else (v[0], u)
                     
                     key = (a, c)
 
@@ -244,7 +191,7 @@ class Graph:
 
     # Calcula ordem/tamanho/densidade para uma microrregião.
     def microrregiao_stats(self, microrregiao_id: Any) -> Optional[Dict[str, Any]]:        
-        target = str(microrregiao_id).strip()
+        target = "" if microrregiao_id is None else str(microrregiao_id).strip()
 
         bairros = [b for b, mr in self.bairro_to_microrregiao.items() if str(mr).strip() == target]
 
@@ -258,8 +205,8 @@ class Graph:
 
         for u in bairros:
             for v in self.adj.get(u, []):
-                if v in bairros:
-                    a, b_ = (u, v) if u <= v else (v, u)
+                if v[0] in bairros:
+                    a, b_ = (u, v[0]) if u <= v[0] else (v[0], u)
 
                     key = (a, b_)
 

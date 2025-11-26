@@ -14,7 +14,7 @@ def _parse_list_string(val):
         return val
     
     s = str(val).strip()
-    
+
     if s == "" or s == "[]":
         return []
     
@@ -30,7 +30,7 @@ def _parse_list_string(val):
     
     seen = set()
     out = []
-    
+
     for g in parsed:
         gg = str(g).strip().lower()
     
@@ -153,9 +153,9 @@ def build_edges_from_spotify(
     make_negative_cycle: bool = False,
     negative_cycle_size: int = 3,
     cycle_edge_weight: float = -0.5,
-    random_seed: int = 42
+    random_seed: int = 42,
+    persist_negative: bool = False
 ):
- 
     spotify_p = Path(spotify_filtered_csv)
   
     if not spotify_p.exists():
@@ -163,13 +163,16 @@ def build_edges_from_spotify(
 
     df = pd.read_csv(spotify_p, dtype=str, encoding="utf-8-sig", keep_default_na=False)
 
+    # Filtrar pelas músicas de Ariana Grande, apenas
+    df = df[df["artist_name"].str.strip().str.lower() == "ariana grande"]
+
     if node_col not in df.columns:
         raise KeyError(f"Coluna de nó '{node_col}' não encontrada no CSV.")
     if genres_col not in df.columns:
         raise KeyError(f"Coluna de gêneros '{genres_col}' não encontrada no CSV.")
 
     tracks = []
-    
+
     for _, r in df.iterrows():
         track = str(r[node_col]).strip()
         raw_genres = r.get(genres_col)
@@ -232,7 +235,7 @@ def build_edges_from_spotify(
         album_id = str(r.get("album_id") or "").strip()
         explicit_flag = False
         vexp = r.get("explicit", False)
-        
+
         if isinstance(vexp, str):
             explicit_flag = vexp.strip().lower() in ("true", "1", "yes", "y", "t")
         else:
@@ -251,7 +254,7 @@ def build_edges_from_spotify(
         }
         all_followers.append(af)
         all_durations.append(dur)
-        
+
         if year:
             all_years.append(year)
 
@@ -282,7 +285,7 @@ def build_edges_from_spotify(
 
     random.seed(random_seed)
 
-    if negative_shift > 0.0 and negative_fraction > 0.0 and len(edge_weights) > 0:
+    if persist_negative and negative_shift > 0.0 and negative_fraction > 0.0 and len(edge_weights) > 0:
         k = max(1, int(len(edge_weights) * float(negative_fraction)))
         keys = list(edge_weights.keys())
         chosen = random.sample(keys, k)
@@ -293,14 +296,14 @@ def build_edges_from_spotify(
         for key in chosen:
             edge_weights[key]["peso"] = edge_weights[key]["peso"] - float(negative_shift)
 
-    if make_negative_cycle:
+    if persist_negative and make_negative_cycle:
         available_tracks = list(track_meta.keys())
 
         if len(available_tracks) < negative_cycle_size:
             raise ValueError("Não há tracks suficientes para construir ciclo negativo do tamanho solicitado.")
         
         cycle_nodes = random.sample(available_tracks, negative_cycle_size)
-        
+
         if verbose:
             print(f"[build_edges] criando ciclo negativo com nodes: {cycle_nodes} e peso por aresta {cycle_edge_weight}")
         
@@ -308,7 +311,7 @@ def build_edges_from_spotify(
             a = cycle_nodes[i]
             b = cycle_nodes[(i + 1) % len(cycle_nodes)]
             key = (a, b) if a <= b else (b, a)
-            
+
             if key in edge_weights:
                 edge_weights[key]["peso"] = float(cycle_edge_weight)
                 edge_weights[key]["common_genres"] = edge_weights[key].get("common_genres", "")
@@ -325,11 +328,11 @@ def build_edges_from_spotify(
 
     rows = []
     epsilon = 1e-6
-    allow_negative = (negative_shift > 0.0) or make_negative_cycle
-    
+    allow_negative = persist_negative
+
     for (a, b), info in edge_weights.items():
         peso = float(info["peso"])
-        
+
         if not allow_negative and peso < epsilon:
             peso = epsilon
         
@@ -350,9 +353,9 @@ def build_edges_from_spotify(
     if verbose:
         print(f"[build_edges] arestas únicas geradas: {len(out_df)}")
         print(f"[build_edges] arquivo salvo em: {out_path.resolve()}")
-        if negative_shift > 0.0 and negative_fraction > 0.0:
+        if persist_negative and negative_shift > 0.0 and negative_fraction > 0.0:
             print(f"[build_edges] (atenção) pesos negativos foram gerados para {negative_fraction*100:.2f}% das arestas.")
-        if make_negative_cycle:
+        if persist_negative and make_negative_cycle:
             print(f"[build_edges] (atenção) ciclo negativo criado (tamanho {negative_cycle_size}).")
 
     return out_df

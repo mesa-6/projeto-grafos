@@ -7,7 +7,7 @@ from src.web.deps import get_graph
 from pathlib import Path
 import random
 import json
-import time
+import copy
 
 from src.solve import (
     generate_global_summary,
@@ -265,8 +265,7 @@ def api_bench(graph = Depends(get_graph)):
       - 10 BFS
       - 10 DFS
       - 10 Dijkstra
-      - 5 Bellman-Ford
-      - 5 Floyd-Warshall (em subgrafos induzidos de até max_fw_nodes)
+      - 5 Bellman-Ford (com variações de injeção de arestas negativas)
     Salva out/parte2_report.json e retorna um sumário.
     """
 
@@ -284,20 +283,6 @@ def api_bench(graph = Depends(get_graph)):
     random.seed(random_seed)
 
     normalizer = getattr(graph, "normalize_node", lambda x: x)
-
-    def _unpack_nbr(nbr):
-        if isinstance(nbr, (list, tuple)):
-            v = nbr[0] if len(nbr) >= 1 else None
-   
-            try:
-                w = float(nbr[1]) if len(nbr) >= 2 else 1.0
-            except Exception:
-                w = 1.0
-        else:
-            v = nbr
-            w = 1.0
-   
-        return v, w
 
     def sample_sources(k: int) -> List[str]:
         if N >= k:
@@ -369,7 +354,7 @@ def api_bench(graph = Depends(get_graph)):
         b_norm = normalizer(b)
     
         try:
-            res = algorithms.dijkstra(graph, a_norm)
+            res = algorithms.dijkstra(graph, a_norm, b_norm)
     
             if "error" in res:
                 dijkstra_runs.append({"orig": a_norm, "dest": b_norm, "error": res.get("error")})
@@ -381,83 +366,66 @@ def api_bench(graph = Depends(get_graph)):
     
     bench_result["runs"]["dijkstra"] = dijkstra_runs
 
-    # Bellman-Ford x5
+    # Bellman-Ford x5 (pares) -- substitua a seção atual por isto
     bf_pairs = sample_pairs(5)
     bf_runs = []
-    
-    for a, b in bf_pairs:
+
+    for i, (a, b) in enumerate(bf_pairs):
         a_norm = normalizer(a)
         b_norm = normalizer(b)
-    
+
         try:
-            res = algorithms.bellman_ford(graph, a_norm)
+            # trabalhar em cópia para NÃO alterar o grafo global
+            g_copy = copy.deepcopy(graph)
+
+            # cenário decide o que injetar:
+            # i == 0..1 -> negativos espalhados (sem ciclo forçado)
+            # i == 2   -> negativos com fração maior (chance maior de caminhos negativos)
+            # i == 3   -> nenhum negativo (controle)
+            # i == 4   -> injetar ciclo negativo explícito
+            injected = {"negative_fraction": False, "negative_cycle": False, "notes": ""}
+
+            if hasattr(g_copy, "apply_negative_fraction") and hasattr(g_copy, "inject_negative_cycle"):
+                if i in (0, 1):
+                    # pequenas frações com shift moderado -> negativos, provavelmente sem ciclo
+                    g_copy.apply_negative_fraction(negative_shift=0.6, negative_fraction=0.03, seed=12345 + i)
+                    injected["negative_fraction"] = True
+                    injected["notes"] = "small_fraction_shift"
+                elif i == 2:
+                    # maior chance de negativos (ainda sem ciclo forçado)
+                    g_copy.apply_negative_fraction(negative_shift=0.8, negative_fraction=0.10, seed=54321 + i)
+                    injected["negative_fraction"] = True
+                    injected["notes"] = "larger_fraction_shift"
+                elif i == 3:
+                    # controle: sem negativos
+                    injected["notes"] = "no_injection_control"
+                else:  # i == 4
+                    # força ciclo negativo
+                    cycle_nodes = g_copy.inject_negative_cycle(cycle_size=3, cycle_edge_weight=-0.8, seed=999 + i)
+                    injected["negative_cycle"] = True
+                    injected["notes"] = f"cycle_nodes={cycle_nodes}"
+            else:
+                # fallback: se graph não tem helpers, tentar modificar manualmente m edges (pode falhar)
+                injected["notes"] = "no_injection_methods_available"
+
+            # executar BF na cópia (origem = a_norm)
+            res = algorithms.bellman_ford(g_copy, a_norm)
             neg = res.get("negative_cycle")
             dist = res.get("dist", {}).get(b_norm, None)
-            bf_runs.append({"orig": a_norm, "dest": b_norm, "time_sec": res.get("time_sec"), "dist": dist, "negative_cycle": bool(neg)})
+
+            bf_runs.append({
+                "orig": a_norm,
+                "dest": b_norm,
+                "time_sec": res.get("time_sec"),
+                "dist": dist,
+                "negative_cycle": bool(neg),
+                "injected": injected
+            })
         except Exception as e:
             bf_runs.append({"orig": a_norm, "dest": b_norm, "error": str(e)})
-    
+
     bench_result["runs"]["bellman_ford"] = bf_runs
 
-    # Floyd-Warshall x5
-    max_fw_nodes = 120
-    fw_runs = []
-    
-    for i in range(5):
-        k = min(max_fw_nodes, N)
-        subset = random.sample(nodes, k) if N >= k else nodes[:]
-        adj_sub = {}
-        
-        for u in subset:
-            adj_sub[u] = []
-    
-            for nbr in graph.adj.get(u, []):
-                v, w = _unpack_nbr(nbr)
-    
-                if v is None:
-                    continue
-    
-                if v in subset:
-                    adj_sub[u].append((v, w))
-        class MiniGraph:
-            def __init__(self, adj, directed=False):
-                self.adj = adj
-                self.directed = directed
-            
-            def nodes_list(self):
-                return list(self.adj.keys())
-        
-        subg = MiniGraph(adj_sub, directed=False)
-        
-        try:
-            t0 = time.time()
-            dist_map = algorithms.floyd_warshall(subg)
-            t = time.time() - t0
-
-            pairs_with_path = None
-            
-            try:
-                if isinstance(dist_map, dict):
-                    cnt = 0
-                    
-                    for uu, inn in dist_map.items():
-                        if isinstance(inn, dict):
-                            for vv, dd in inn.items():
-                                try:
-                                    if dd is not None and dd != float("inf"):
-                                        cnt += 1
-                                except Exception:
-                                    pass
-                    
-                    pairs_with_path = cnt
-            except Exception:
-                pairs_with_path = None
-
-            fw_runs.append({"run": i + 1, "n_nodes": len(subg.nodes_list()), "time_sec": t, "pairs_with_path": pairs_with_path})
-        except Exception as e:
-            fw_runs.append({"run": i + 1, "error": str(e)})
-    
-    bench_result["runs"]["floyd_warshall"] = fw_runs
 
     try:
         with open(report_path, "w", encoding="utf-8") as fh:

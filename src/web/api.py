@@ -388,12 +388,12 @@ def api_bench(graph = Depends(get_graph)):
             if hasattr(g_copy, "apply_negative_fraction") and hasattr(g_copy, "inject_negative_cycle"):
                 if i in (0, 1):
                     # pequenas frações com shift moderado -> negativos, provavelmente sem ciclo
-                    g_copy.apply_negative_fraction(negative_shift=0.6, negative_fraction=0.03, seed=12345 + i)
+                    g_copy.apply_negative_fraction(negative_shift=0.1, negative_fraction=0.01, seed=12345 + i)
                     injected["negative_fraction"] = True
                     injected["notes"] = "small_fraction_shift"
                 elif i == 2:
                     # maior chance de negativos (ainda sem ciclo forçado)
-                    g_copy.apply_negative_fraction(negative_shift=0.8, negative_fraction=0.10, seed=54321 + i)
+                    g_copy.apply_negative_fraction(negative_shift=0.1, negative_fraction=0.01, seed=54321 + i)
                     injected["negative_fraction"] = True
                     injected["notes"] = "larger_fraction_shift"
                 elif i == 3:

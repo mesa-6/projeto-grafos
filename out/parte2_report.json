@@ -1,183 +1,183 @@
 {
   "meta": {
-    "n_nodes": 75,
+    "n_nodes": 79,
     "seed": 12345,
     "graph": "MusicGraph"
   },
   "runs": {
     "bfs": [
       {
-        "source": "motive (with Doja Cat)",
-        "time_sec": 0.0033445358276367188,
-        "n_reached": 75
+        "source": "intro (end of the world) - extended",
+        "time_sec": 0.004452228546142578,
+        "n_reached": 79
       },
       {
         "source": "7 rings",
-        "time_sec": 0.0027654170989990234,
-        "n_reached": 75
-      },
-      {
-        "source": "dandelion",
-        "time_sec": 0.002045869827270508,
-        "n_reached": 75
-      },
-      {
-        "source": "in my head",
-        "time_sec": 0.0010902881622314453,
-        "n_reached": 75
-      },
-      {
-        "source": "Side To Side",
-        "time_sec": 0.0010633468627929688,
-        "n_reached": 75
+        "time_sec": 0.003954648971557617,
+        "n_reached": 79
       },
       {
         "source": "boyfriend (with Social House)",
-        "time_sec": 0.00104522705078125,
-        "n_reached": 75
+        "time_sec": 0.0041158199310302734,
+        "n_reached": 79
       },
       {
-        "source": "nasty",
-        "time_sec": 0.0010540485382080078,
-        "n_reached": 75
+        "source": "ghostin",
+        "time_sec": 0.004548788070678711,
+        "n_reached": 79
       },
       {
         "source": "Problem",
-        "time_sec": 0.0010380744934082031,
-        "n_reached": 75
+        "time_sec": 0.00407719612121582,
+        "n_reached": 79
+      },
+      {
+        "source": "Touch It",
+        "time_sec": 0.0040776729583740234,
+        "n_reached": 79
+      },
+      {
+        "source": "the boy is mine",
+        "time_sec": 0.0047359466552734375,
+        "n_reached": 79
+      },
+      {
+        "source": "love language",
+        "time_sec": 0.0046579837799072266,
+        "n_reached": 79
+      },
+      {
+        "source": "Love Me Harder",
+        "time_sec": 0.004291057586669922,
+        "n_reached": 79
       },
       {
         "source": "warm",
-        "time_sec": 0.0020940303802490234,
-        "n_reached": 75
-      },
-      {
-        "source": "Knew Better / Forever Boy",
-        "time_sec": 0.0024678707122802734,
-        "n_reached": 75
+        "time_sec": 0.00384521484375,
+        "n_reached": 79
       }
     ],
     "dfs": [
       {
-        "source": "nasty",
-        "time_sec": 0.004545450210571289,
-        "n_ordered": 75
+        "source": "Into You",
+        "time_sec": 0.008183479309082031,
+        "n_ordered": 79
       },
       {
-        "source": "bloodline",
-        "time_sec": 0.004257917404174805,
-        "n_ordered": 75
+        "source": "love language",
+        "time_sec": 0.007279396057128906,
+        "n_ordered": 79
       },
       {
-        "source": "warm",
-        "time_sec": 0.006323099136352539,
-        "n_ordered": 75
+        "source": "Thinking Bout You",
+        "time_sec": 0.007897615432739258,
+        "n_ordered": 79
       },
       {
-        "source": "Santa Tell Me",
-        "time_sec": 0.007807016372680664,
-        "n_ordered": 75
+        "source": "thank u, next",
+        "time_sec": 0.007121086120605469,
+        "n_ordered": 79
       },
       {
-        "source": "twilight zone",
-        "time_sec": 0.006594181060791016,
-        "n_ordered": 75
+        "source": "NASA",
+        "time_sec": 0.007342100143432617,
+        "n_ordered": 79
       },
       {
-        "source": "Saturn Returns Interlude",
-        "time_sec": 0.0060482025146484375,
-        "n_ordered": 75
+        "source": "supernatural",
+        "time_sec": 0.007536888122558594,
+        "n_ordered": 79
       },
       {
-        "source": "imagine",
-        "time_sec": 0.005272626876831055,
-        "n_ordered": 75
+        "source": "One Last Time",
+        "time_sec": 0.007485389709472656,
+        "n_ordered": 79
       },
       {
-        "source": "Honeymoon Avenue",
-        "time_sec": 0.008093595504760742,
-        "n_ordered": 75
+        "source": "everytime",
+        "time_sec": 0.008118867874145508,
+        "n_ordered": 79
       },
       {
-        "source": "make up",
-        "time_sec": 0.010839223861694336,
-        "n_ordered": 75
+        "source": "God is a woman",
+        "time_sec": 0.006205320358276367,
+        "n_ordered": 79
       },
       {
-        "source": "shut up",
-        "time_sec": 0.011831521987915039,
-        "n_ordered": 75
+        "source": "safety net (feat. Ty Dolla $ign)",
+        "time_sec": 0.006928205490112305,
+        "n_ordered": 79
       }
     ],
     "dijkstra": [
       {
-        "orig": "Right There",
-        "dest": "NASA",
-        "time_sec": 0.002627849578857422,
-        "dist": 1.0
+        "orig": "intro (end of the world)",
+        "dest": "twilight zone",
+        "time_sec": 0.0008976459503173828,
+        "dist": 0.189128
       },
       {
-        "orig": "Stuck with U (with Justin Bieber)",
-        "dest": "Everyday",
-        "time_sec": 0.0006771087646484375,
-        "dist": 1.0
+        "orig": "ordinary things (feat. Nonna)",
+        "dest": "Moonlight",
+        "time_sec": 0.0008623600006103516,
+        "dist": 0.195659
       },
       {
-        "orig": "Side To Side",
-        "dest": "ghostin",
-        "time_sec": 0.0024483203887939453,
-        "dist": 1.0
+        "orig": "Leave Me Lonely",
+        "dest": "Santa Tell Me",
+        "time_sec": 0.001476287841796875,
+        "dist": 0.213805
       },
       {
-        "orig": "everytime",
-        "dest": "Be Alright",
-        "time_sec": 0.00027751922607421875,
-        "dist": 1.0
+        "orig": "Don’t Call Me Angel (Charlie’s Angels) (with Miley Cyrus & Lana Del Rey)",
+        "dest": "Problem",
+        "time_sec": 0.0010142326354980469,
+        "dist": 0.192745
       },
       {
-        "orig": "obvious",
-        "dest": "ghostin",
-        "time_sec": 0.0022559165954589844,
-        "dist": 1.0
+        "orig": "don't wanna break up again",
+        "dest": "bye",
+        "time_sec": 0.00022649765014648438,
+        "dist": 0.031737
       },
       {
-        "orig": "Be Alright",
-        "dest": "six thirty",
-        "time_sec": 0.0035483837127685547,
-        "dist": 1.0
+        "orig": "Bad Decisions",
+        "dest": "my hair",
+        "time_sec": 0.0022788047790527344,
+        "dist": 0.22108
       },
       {
-        "orig": "motive (with Doja Cat)",
-        "dest": "34+35",
-        "time_sec": 0.00022268295288085938,
-        "dist": 1.0
+        "orig": "don't wanna break up again",
+        "dest": "Bad Decisions",
+        "time_sec": 0.0016591548919677734,
+        "dist": 0.211255
+      },
+      {
+        "orig": "positions",
+        "dest": "intro (end of the world) - extended",
+        "time_sec": 0.0006539821624755859,
+        "dist": 0.230537
       },
       {
         "orig": "34+35",
-        "dest": "Problem",
-        "time_sec": 0.0021812915802001953,
-        "dist": 1.0
+        "dest": "Love Me Harder",
+        "time_sec": 0.0040090084075927734,
+        "dist": 0.227202
       },
       {
-        "orig": "yes, and?",
-        "dest": "Santa Tell Me",
-        "time_sec": 0.002095937728881836,
-        "dist": 1.0
-      },
-      {
-        "orig": "breathin",
-        "dest": "I Don't Care",
-        "time_sec": 0.0012159347534179688,
-        "dist": 1.0
+        "orig": "twilight zone",
+        "dest": "NASA",
+        "time_sec": 0.0009331703186035156,
+        "dist": 0.193922
       }
     ],
     "bellman_ford": [
       {
-        "orig": "motive (with Doja Cat)",
-        "dest": "Into You",
-        "time_sec": 0.010733366012573242,
-        "dist": 1.0,
-        "negative_cycle": false,
+        "orig": "better off",
+        "dest": "Greedy",
+        "time_sec": 0.24466371536254883,
+        "dist": -9.063399999999993,
+        "negative_cycle": true,
         "injected": {
           "negative_fraction": true,
           "negative_cycle": false,
@@ -185,11 +185,11 @@
         }
       },
       {
-        "orig": "west side",
-        "dest": "Saturn Returns Interlude",
-        "time_sec": 0.02692437171936035,
-        "dist": 1.0,
-        "negative_cycle": false,
+        "orig": "intro (end of the world) - extended",
+        "dest": "Honeymoon Avenue",
+        "time_sec": 0.24608802795410156,
+        "dist": -10.812896999999976,
+        "negative_cycle": true,
         "injected": {
           "negative_fraction": true,
           "negative_cycle": false,
@@ -197,11 +197,11 @@
         }
       },
       {
-        "orig": "intro (end of the world)",
-        "dest": "Thinking Bout You",
-        "time_sec": 0.024091005325317383,
-        "dist": 0.3999999999999999,
-        "negative_cycle": false,
+        "orig": "true story",
+        "dest": "One Last Time",
+        "time_sec": 0.2557966709136963,
+        "dist": -12.988138999999986,
+        "negative_cycle": true,
         "injected": {
           "negative_fraction": true,
           "negative_cycle": false,
@@ -209,10 +209,10 @@
         }
       },
       {
-        "orig": "thank u, next",
-        "dest": "fake smile",
-        "time_sec": 0.007077693939208984,
-        "dist": 1.0,
+        "orig": "i wish i hated you",
+        "dest": "Sometimes",
+        "time_sec": 0.014771461486816406,
+        "dist": 0.23414600000000002,
         "negative_cycle": false,
         "injected": {
           "negative_fraction": false,
@@ -221,15 +221,15 @@
         }
       },
       {
-        "orig": "Break Free",
-        "dest": "Thinking Bout You",
-        "time_sec": 0.1711740493774414,
-        "dist": -174.00000000000034,
+        "orig": "safety net (feat. Ty Dolla $ign)",
+        "dest": "we can't be friends (wait for your love)",
+        "time_sec": 0.25498199462890625,
+        "dist": -185.9667930000005,
         "negative_cycle": true,
         "injected": {
           "negative_fraction": false,
           "negative_cycle": true,
-          "notes": "cycle_nodes=['Side To Side', 'ordinary things (feat. Nonna)', 'Knew Better / Forever Boy']"
+          "notes": "cycle_nodes=['Let Me Love You', 'Don’t Call Me Angel (Charlie’s Angels) (with Miley Cyrus & Lana Del Rey)', 'Greedy']"
         }
       }
     ]

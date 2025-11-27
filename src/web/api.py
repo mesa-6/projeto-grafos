@@ -247,17 +247,6 @@ def api_bellman_ford(orig: str = Query(...), dest: Optional[str] = Query(None), 
     
     return {"orig": src_n, "time_sec": res.get("time_sec"), "negative_cycle": res.get("negative_cycle"), "distances": res.get("dist")}
 
-@app.get("/floyd-warshall", tags=["algorithms"])
-def api_floyd_warshall(graph = Depends(get_graph)):
-    N = len(graph.nodes_list())
-    
-    if N > 800:
-        raise HTTPException(status_code=400, detail="graph too large for Floyd-Warshall via API; select a smaller subgraph")
-    
-    dist_map = algorithms.floyd_warshall(graph)
-    
-    return {"n_nodes": N, "distances": dist_map}
-
 @app.post("/bench", tags=["bench"])
 def api_bench(graph = Depends(get_graph)):
     """

@@ -1,5 +1,5 @@
 from typing import List, Set, Dict
-from src.graphs.graph import Graph
+from src.graphs.music_graph import MusicGraph
 from pyvis.network import Network
 from pathlib import Path
 import pandas as pd
@@ -238,7 +238,7 @@ def patch_safe_options_config(html_path: str | Path) -> None:
         else:
             print("[patch_safe_options_config] nothing found to patch")
 
-def build_interactive_html(graph: Graph, nodes_subset: Set[str], out_html: str, title: str = "Parte2 - Interativo", physics_threshold: int = 200) -> int:
+def build_interactive_html(graph: MusicGraph, nodes_subset: Set[str], out_html: str, title: str = "Parte2 - Interativo", physics_threshold: int = 200) -> int:
     max_edges_per_node = 30
     nodes_list = sorted(nodes_subset)
     degs = {n: len(graph.adj.get(n, [])) for n in nodes_list}

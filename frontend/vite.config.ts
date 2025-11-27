@@ -1,13 +1,9 @@
 import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
-export default defineConfig(async () => {
-  // carregamento dinâmico para evitar erro ESM-only em alguns ambientes Windows/Node
-  const reactPlugin = (await import("@vitejs/plugin-react")).default;
-
-  return {
-    plugins: [reactPlugin()],
-    server: {
-      port: 5173,
-    },
-  };
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 5173,
+  },
 });

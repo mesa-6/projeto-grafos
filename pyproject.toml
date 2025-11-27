@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [tool.poetry]
-packages = [{include = "projeto_grafos", from = "src"}]
+packages = [{include = "projeto-grafos", from = "src"}]
 
 
 [build-system]

@@ -814,14 +814,101 @@ function MusicasPage() {
 
 /* ---------- Home Page ---------- */
 function Home() {
+  const people = [
+    { name: "Arthur Capistrano", role: "Membro" },
+    { name: "Érico Chen", role: "Membro" },
+    { name: "Gabriel Tabosa", role: "Membro" },
+    { name: "Gheyson Melo", role: "Membro" },
+    { name: "João Antônio", role: "Membro" },
+    { name: "Profª Laura Pacífico", role: "Orientadora" },
+  ];
+
+  const initialsOf = (fullName) =>
+    fullName
+      .replace(/(^\s+|\s+$)/g, "")
+      .split(/\s+/)
+      .map((p) => p[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+
   return (
     <main className="app-container" style={{ padding: 24 }}>
       <div className="card p-8">
         <h1 className="text-3xl font-bold">Projeto Grafos</h1>
-        <p className="small-muted mt-2">
-          Navegue para visualizar o grafo dos bairros ou gerar playlists a
-          partir do grafo de músicas.
+        <p className="small-muted mt-1" style={{ marginBottom: 18 }}>
+          Mesa 6
         </p>
+
+        {/* Grid 3x2 com 6 bolinhas */}
+        <div
+          className="grid"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, minmax(0,1fr))",
+            gap: 18,
+            alignItems: "center",
+            justifyItems: "center",
+          }}
+        >
+          {people.map((p) => {
+            const isProfessor = p.role !== "Membro";
+            return (
+              <div
+                key={p.name}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 8,
+                  width: 180,
+                }}
+              >
+                <div
+                  aria-hidden
+                  title={p.name}
+                  style={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: 9999,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontWeight: 800,
+                    color: "white",
+                    background: isProfessor
+                      ? "linear-gradient(135deg,#059669,#10b981)"
+                      : "linear-gradient(135deg,#2563eb,#06b6d4)",
+                    boxShadow: isProfessor
+                      ? "0 8px 24px rgba(5,150,105,0.08)"
+                      : "0 8px 24px rgba(37,99,235,0.08)",
+                    fontSize: 18,
+                  }}
+                >
+                  {initialsOf(p.name)}
+                </div>
+
+                <div style={{ textAlign: "center" }}>
+                  <div
+                    style={{ fontWeight: 700, color: "#0f172a", fontSize: 14 }}
+                  >
+                    {p.name}
+                  </div>
+                  <div
+                    className="small-muted"
+                    style={{
+                      fontSize: 12,
+                      color: isProfessor ? "#065f46" : "#475569",
+                      marginTop: 2,
+                    }}
+                  >
+                    {p.role}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </main>
   );

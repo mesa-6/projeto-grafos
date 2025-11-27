@@ -1,237 +1,236 @@
 {
   "meta": {
-    "n_nodes": 94,
-    "seed": 12345
+    "n_nodes": 75,
+    "seed": 12345,
+    "graph": "MusicGraph"
   },
   "runs": {
     "bfs": [
       {
-        "source": "JARDIM SAO PAULO",
-        "time_sec": 0.00021219253540039062,
-        "n_reached": 94
+        "source": "motive (with Doja Cat)",
+        "time_sec": 0.0033445358276367188,
+        "n_reached": 75
       },
       {
-        "source": "ZUMBI",
-        "time_sec": 0.00018739700317382812,
-        "n_reached": 94
+        "source": "7 rings",
+        "time_sec": 0.0027654170989990234,
+        "n_reached": 75
       },
       {
-        "source": "AFOGADOS",
-        "time_sec": 0.0001780986785888672,
-        "n_reached": 94
+        "source": "dandelion",
+        "time_sec": 0.002045869827270508,
+        "n_reached": 75
       },
       {
-        "source": "ENGENHO DO MEIO",
-        "time_sec": 0.0001773834228515625,
-        "n_reached": 94
+        "source": "in my head",
+        "time_sec": 0.0010902881622314453,
+        "n_reached": 75
       },
       {
-        "source": "ILHA DO RETIRO",
-        "time_sec": 0.00017642974853515625,
-        "n_reached": 94
+        "source": "Side To Side",
+        "time_sec": 0.0010633468627929688,
+        "n_reached": 75
       },
       {
-        "source": "CASA AMARELA",
-        "time_sec": 0.00017571449279785156,
-        "n_reached": 94
+        "source": "boyfriend (with Social House)",
+        "time_sec": 0.00104522705078125,
+        "n_reached": 75
       },
       {
-        "source": "DERBY",
-        "time_sec": 0.00020051002502441406,
-        "n_reached": 94
+        "source": "nasty",
+        "time_sec": 0.0010540485382080078,
+        "n_reached": 75
       },
       {
-        "source": "PONTO DE PARADA",
-        "time_sec": 0.00017762184143066406,
-        "n_reached": 94
+        "source": "Problem",
+        "time_sec": 0.0010380744934082031,
+        "n_reached": 75
       },
       {
-        "source": "JORDAO",
-        "time_sec": 0.0001761913299560547,
-        "n_reached": 94
+        "source": "warm",
+        "time_sec": 0.0020940303802490234,
+        "n_reached": 75
       },
       {
-        "source": "CACOTE",
-        "time_sec": 0.00017523765563964844,
-        "n_reached": 94
+        "source": "Knew Better / Forever Boy",
+        "time_sec": 0.0024678707122802734,
+        "n_reached": 75
       }
     ],
     "dfs": [
       {
-        "source": "ILHA DO RETIRO",
-        "time_sec": 0.00048089027404785156,
-        "n_ordered": 94
+        "source": "nasty",
+        "time_sec": 0.004545450210571289,
+        "n_ordered": 75
       },
       {
-        "source": "BONGI",
-        "time_sec": 0.0003058910369873047,
-        "n_ordered": 94
+        "source": "bloodline",
+        "time_sec": 0.004257917404174805,
+        "n_ordered": 75
       },
       {
-        "source": "JORDAO",
-        "time_sec": 0.0002853870391845703,
-        "n_ordered": 94
+        "source": "warm",
+        "time_sec": 0.006323099136352539,
+        "n_ordered": 75
       },
       {
-        "source": "CURADO",
-        "time_sec": 0.000308990478515625,
-        "n_ordered": 94
+        "source": "Santa Tell Me",
+        "time_sec": 0.007807016372680664,
+        "n_ordered": 75
       },
       {
-        "source": "POCO",
-        "time_sec": 0.0003845691680908203,
-        "n_ordered": 94
+        "source": "twilight zone",
+        "time_sec": 0.006594181060791016,
+        "n_ordered": 75
       },
       {
-        "source": "SANTO AMARO",
-        "time_sec": 0.0002713203430175781,
-        "n_ordered": 94
+        "source": "Saturn Returns Interlude",
+        "time_sec": 0.0060482025146484375,
+        "n_ordered": 75
       },
       {
-        "source": "CAMPINA DO BARRETO",
-        "time_sec": 0.00027251243591308594,
-        "n_ordered": 94
+        "source": "imagine",
+        "time_sec": 0.005272626876831055,
+        "n_ordered": 75
       },
       {
-        "source": "SANCHO",
-        "time_sec": 0.0002722740173339844,
-        "n_ordered": 94
+        "source": "Honeymoon Avenue",
+        "time_sec": 0.008093595504760742,
+        "n_ordered": 75
       },
       {
-        "source": "PINA",
-        "time_sec": 0.000293731689453125,
-        "n_ordered": 94
+        "source": "make up",
+        "time_sec": 0.010839223861694336,
+        "n_ordered": 75
       },
       {
-        "source": "CAMPO GRANDE",
-        "time_sec": 0.0002925395965576172,
-        "n_ordered": 94
+        "source": "shut up",
+        "time_sec": 0.011831521987915039,
+        "n_ordered": 75
       }
     ],
     "dijkstra": [
       {
-        "orig": "IBURA",
-        "dest": "ZUMBI",
-        "time_sec": 0.00027489662170410156,
-        "dist": 5.3
+        "orig": "Right There",
+        "dest": "NASA",
+        "time_sec": 0.002627849578857422,
+        "dist": 1.0
       },
       {
-        "orig": "BEBERIBE",
-        "dest": "PASSARINHO",
-        "time_sec": 0.0002455711364746094,
-        "dist": 4.05
+        "orig": "Stuck with U (with Justin Bieber)",
+        "dest": "Everyday",
+        "time_sec": 0.0006771087646484375,
+        "dist": 1.0
       },
       {
-        "orig": "JAQUEIRA",
-        "dest": "PRADO",
-        "time_sec": 0.00024127960205078125,
-        "dist": 3.4
+        "orig": "Side To Side",
+        "dest": "ghostin",
+        "time_sec": 0.0024483203887939453,
+        "dist": 1.0
       },
       {
-        "orig": "NOVA DESCOBERTA",
-        "dest": "CAJUEIRO",
-        "time_sec": 0.00023746490478515625,
-        "dist": 6.6
+        "orig": "everytime",
+        "dest": "Be Alright",
+        "time_sec": 0.00027751922607421875,
+        "dist": 1.0
       },
       {
-        "orig": "BREJO DE BEBERIBE",
-        "dest": "CAXANGA",
-        "time_sec": 0.0002334117889404297,
-        "dist": 5.35
+        "orig": "obvious",
+        "dest": "ghostin",
+        "time_sec": 0.0022559165954589844,
+        "dist": 1.0
       },
       {
-        "orig": "VASCO DA GAMA",
-        "dest": "ARRUDA",
-        "time_sec": 0.00023412704467773438,
-        "dist": 2.55
+        "orig": "Be Alright",
+        "dest": "six thirty",
+        "time_sec": 0.0035483837127685547,
+        "dist": 1.0
       },
       {
-        "orig": "CASA AMARELA",
-        "dest": "GUABIRABA",
-        "time_sec": 0.00023698806762695312,
-        "dist": 2.85
+        "orig": "motive (with Doja Cat)",
+        "dest": "34+35",
+        "time_sec": 0.00022268295288085938,
+        "dist": 1.0
       },
       {
-        "orig": "FUNDAO",
-        "dest": "ALTO DO MANDU",
-        "time_sec": 0.00023436546325683594,
-        "dist": 6.0
+        "orig": "34+35",
+        "dest": "Problem",
+        "time_sec": 0.0021812915802001953,
+        "dist": 1.0
       },
       {
-        "orig": "MADALENA",
-        "dest": "GUABIRABA",
-        "time_sec": 0.00024962425231933594,
-        "dist": 5.75
+        "orig": "yes, and?",
+        "dest": "Santa Tell Me",
+        "time_sec": 0.002095937728881836,
+        "dist": 1.0
       },
       {
-        "orig": "ALTO DO MANDU",
-        "dest": "PAISSANDU",
-        "time_sec": 0.0002446174621582031,
-        "dist": 4.8999999999999995
+        "orig": "breathin",
+        "dest": "I Don't Care",
+        "time_sec": 0.0012159347534179688,
+        "dist": 1.0
       }
     ],
     "bellman_ford": [
       {
-        "orig": "TORREAO",
-        "dest": "JARDIM SAO PAULO",
-        "time_sec": 0.0009748935699462891,
-        "dist": 7.250000000000001,
-        "negative_cycle": false
+        "orig": "motive (with Doja Cat)",
+        "dest": "Into You",
+        "time_sec": 0.010733366012573242,
+        "dist": 1.0,
+        "negative_cycle": false,
+        "injected": {
+          "negative_fraction": true,
+          "negative_cycle": false,
+          "notes": "small_fraction_shift"
+        }
       },
       {
-        "orig": "AFLITOS",
-        "dest": "SOLEDADE",
-        "time_sec": 0.0009851455688476562,
-        "dist": 2.5,
-        "negative_cycle": false
+        "orig": "west side",
+        "dest": "Saturn Returns Interlude",
+        "time_sec": 0.02692437171936035,
+        "dist": 1.0,
+        "negative_cycle": false,
+        "injected": {
+          "negative_fraction": true,
+          "negative_cycle": false,
+          "notes": "small_fraction_shift"
+        }
       },
       {
-        "orig": "CACOTE",
-        "dest": "PRADO",
-        "time_sec": 0.001233816146850586,
-        "dist": 4.75,
-        "negative_cycle": false
+        "orig": "intro (end of the world)",
+        "dest": "Thinking Bout You",
+        "time_sec": 0.024091005325317383,
+        "dist": 0.3999999999999999,
+        "negative_cycle": false,
+        "injected": {
+          "negative_fraction": true,
+          "negative_cycle": false,
+          "notes": "larger_fraction_shift"
+        }
       },
       {
-        "orig": "CAMPINA DO BARRETO",
-        "dest": "DOIS UNIDOS",
-        "time_sec": 0.0013308525085449219,
-        "dist": 5.950000000000001,
-        "negative_cycle": false
+        "orig": "thank u, next",
+        "dest": "fake smile",
+        "time_sec": 0.007077693939208984,
+        "dist": 1.0,
+        "negative_cycle": false,
+        "injected": {
+          "negative_fraction": false,
+          "negative_cycle": false,
+          "notes": "no_injection_control"
+        }
       },
       {
-        "orig": "BOA VIAGEM",
-        "dest": "SITIO DOS PINTOS - SAO BRAS",
-        "time_sec": 0.000972747802734375,
-        "dist": 8.9,
-        "negative_cycle": false
-      }
-    ],
-    "floyd_warshall": [
-      {
-        "run": 1,
-        "n_nodes": 94,
-        "time_sec": 0.020889997482299805
-      },
-      {
-        "run": 2,
-        "n_nodes": 94,
-        "time_sec": 0.01831364631652832
-      },
-      {
-        "run": 3,
-        "n_nodes": 94,
-        "time_sec": 0.022309303283691406
-      },
-      {
-        "run": 4,
-        "n_nodes": 94,
-        "time_sec": 0.013819456100463867
-      },
-      {
-        "run": 5,
-        "n_nodes": 94,
-        "time_sec": 0.01189732551574707
+        "orig": "Break Free",
+        "dest": "Thinking Bout You",
+        "time_sec": 0.1711740493774414,
+        "dist": -174.00000000000034,
+        "negative_cycle": true,
+        "injected": {
+          "negative_fraction": false,
+          "negative_cycle": true,
+          "notes": "cycle_nodes=['Side To Side', 'ordinary things (feat. Nonna)', 'Knew Better / Forever Boy']"
+        }
       }
     ]
   }

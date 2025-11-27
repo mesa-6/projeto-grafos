@@ -2,6 +2,7 @@ from typing import List, Dict, Any, Optional, Tuple
 from collections import deque
 import heapq
 import time
+import math
 
 # helpers mínimos
 def _iter_neighbors(graph, u: str):
@@ -101,6 +102,125 @@ def dfs(graph, sources: Optional[List[str]] = None) -> Dict[str, Any]:
         "order": order,
         "edge_classes": edge_classes
     }
+
+def dfs_weighted_tiebreak(graph, sources: Optional[List[str]] = None) -> Dict[str, Any]:
+    t0 = time.time()
+    nodes = list(graph.nodes_list())
+    color = {n: "white" for n in nodes}
+    discovery: Dict[str, Optional[int]] = {n: None for n in nodes}
+    finish: Dict[str, Optional[int]] = {n: None for n in nodes}
+    parent: Dict[str, Optional[str]] = {n: None for n in nodes}
+    order: List[str] = []
+    edge_classes: List[Tuple[str, str, str]] = []
+    timer = 0
+
+    def _visit(u: str):
+        nonlocal timer
+        color[u] = "gray"
+        timer += 1
+        discovery[u] = timer
+        order.append(u)
+
+        nbrs = []
+        for v, w in _iter_neighbors(graph, u):
+            try:
+                weight = float(w)
+            except Exception:
+                weight = float("inf")
+            nbrs.append((weight, v))
+
+        nbrs.sort(key=lambda x: (x[0], x[1]))  
+        
+        for weight, v in nbrs:
+            if color[v] == "white":
+                parent[v] = u
+                edge_classes.append((u, v, "tree"))
+                _visit(v)
+            else:
+                if color[v] == "gray":
+                    edge_classes.append((u, v, "back"))
+                else:
+                    du = discovery.get(u)
+                    dv = discovery.get(v)
+                    if du is not None and dv is not None and du < dv:
+                        edge_classes.append((u, v, "forward"))
+                    else:
+                        edge_classes.append((u, v, "cross"))
+
+        color[u] = "black"
+        timer += 1
+        finish[u] = timer
+
+    if sources:
+        for s in sources:
+            if s in color and color[s] == "white":
+                _visit(s)
+
+    for n in nodes:
+        if color[n] == "white":
+            _visit(n)
+
+    return {
+        "time_sec": time.time() - t0,
+        "discovery": discovery,
+        "finish": finish,
+        "parent": parent,
+        "order": order,
+        "edge_classes": edge_classes
+    }
+
+def bfs_weighted_tiebreak(graph, source: str) -> Dict[str, Any]:
+    t0 = time.time()
+    nodes = list(graph.nodes_list())
+
+    if source not in nodes:
+        return {"time_sec": 0.0, "error": f"source '{source}' not in graph"}
+
+    INF = float("inf")
+    dist = {n: INF for n in nodes}
+    parent = {n: None for n in nodes}
+    order: List[str] = []
+    in_queue = {n: False for n in nodes}
+
+    q = deque()
+    dist[source] = 0.0
+    q.append(source)
+    in_queue[source] = True
+
+    while q:
+        u = q.popleft()
+        in_queue[u] = False
+        order.append(u)
+
+        candidates = []
+
+        for v, w in _iter_neighbors(graph, u):
+            try:
+                weight = float(w)
+            except Exception:
+                weight = INF
+
+            candidates.append((weight, v))
+
+        candidates.sort(key=lambda x: (x[0], x[1]))
+
+        for weight, v in candidates:
+            if weight == INF:
+                continue
+            
+            nd = dist[u] + weight 
+
+            if nd < dist[v]:
+                dist[v] = nd
+                parent[v] = u
+                
+                if not in_queue[v]:
+                    q.append(v)
+                    in_queue[v] = True
+
+    out_dist = {k: (None if math.isinf(v) else v) for k, v in dist.items()}
+
+    return {"time_sec": time.time() - t0, "dist": out_dist, "parent": parent, "order": order}
 
 def dijkstra(graph, source: str, dest: Optional[str] = None) -> Dict[str, Any]:
     t0 = time.time()

@@ -209,6 +209,18 @@ def api_bfs(source: str = Query(...), graph = Depends(get_graph)):
     
     return {"source": src_n, **res}
 
+@app.get("/bfs-playlist", tags=["algorithms"])
+def api_bfs(source: str = Query(...), graph = Depends(get_graph)):
+    src_n = getattr(graph, "normalize_node", lambda x: x)(source)
+    has_node_fn = getattr(graph, "has_node", None)
+    
+    if has_node_fn and not has_node_fn(src_n):
+        raise HTTPException(status_code=404, detail="source not found in graph")
+    
+    res = algorithms.bfs_weighted_tiebreak(graph, src_n)
+    
+    return {"source": src_n, **res}
+
 @app.get("/dfs", tags=["algorithms"])
 def api_dfs(sources: Optional[List[str]] = Query(None), graph = Depends(get_graph)):
     norm_sources = None
@@ -221,6 +233,21 @@ def api_dfs(sources: Optional[List[str]] = Query(None), graph = Depends(get_grap
                 raise HTTPException(status_code=404, detail=f"source '{s}' not found in graph")
     
     res = algorithms.dfs(graph, sources=norm_sources)
+    
+    return {"sources": norm_sources or [], **res}
+
+@app.get("/dfs-playlist", tags=["algorithms"])
+def api_dfs(sources: Optional[List[str]] = Query(None), graph = Depends(get_graph)):
+    norm_sources = None
+    
+    if sources:
+        norm_sources = [getattr(graph, "normalize_node", lambda x: x)(s) for s in sources]
+        
+        for s in norm_sources:
+            if hasattr(graph, "has_node") and not graph.has_node(s):
+                raise HTTPException(status_code=404, detail=f"source '{s}' not found in graph")
+    
+    res = algorithms.dfs_weighted_tiebreak(graph, sources=norm_sources)
     
     return {"sources": norm_sources or [], **res}
 

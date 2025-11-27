@@ -663,7 +663,7 @@ function MusicasPage() {
       }
 
       if (algorithm === "bfs") {
-        const r = await api.get("/bfs", {
+        const r = await api.get("/bfs-playlist", {
           params: { source: seed, graph: "part2" },
           timeout: 60000,
         });
@@ -677,7 +677,7 @@ function MusicasPage() {
       }
 
       if (algorithm === "dfs") {
-        const r = await api.get("/dfs", {
+        const r = await api.get("/dfs-playlist", {
           params: { sources: seed, graph: "part2" },
           timeout: 60000,
         });
@@ -759,8 +759,8 @@ function MusicasPage() {
                     onChange={(e) => setAlgorithm(e.target.value)}
                     style={{ width: "100%" }}
                   >
-                    <option value="bellman-ford">Bellman-Ford</option>
-                    <option value="dijkstra">Dijkstra (repetido)</option>
+                    {/* <option value="bellman-ford">Bellman-Ford</option>
+                    <option value="dijkstra">Dijkstra (repetido)</option> */}
                     <option value="bfs">BFS</option>
                     <option value="dfs">DFS</option>
                   </select>
